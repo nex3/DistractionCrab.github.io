@@ -1,0 +1,54 @@
+body {
+	background: linear-gradient(
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ), url("../images/background-art-small.png") no-repeat center center fixed;
+	will-change: transform;
+}
+
+#body-content {
+	margin: auto;
+	width: 50%;
+	color: white;
+	text-shadow: -1px 1px 0 #000,
+				  2px 2px 0 #000,
+				 1px -1px 0 #000;
+				-1px -1px 0 #000;
+	font-size: xx-large;
+	width: 75%;
+}
+
+a:link {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: pink;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.center {
+	margin-right: auto;
+	margin-left: auto;
+	text-shadow: black 3px 1px;
+	text-align: center;
+}
+
+.header {
+	color: #9e9ae6;
+}
