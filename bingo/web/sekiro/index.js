@@ -123,6 +123,7 @@ const OPTIONS = [
 function main() {
 	const bingo = new Bingo(OPTIONS);
 	bingo.generate();
+	bingo.write_to_board()
 }
 
 document.addEventListener('DOMContentLoaded', main, false);

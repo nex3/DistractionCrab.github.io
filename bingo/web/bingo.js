@@ -121,6 +121,17 @@ class Bingo {
 		return JSON.stringify(this.goals);
 	}
 
+	write_to_board() {
+		const table = document.getElementById('bingo-table');
+		for (var i = 0; i < 5; ++i) {
+			const row = table.rows[i];
+			for (var k = 0; k < 5; ++k) {
+				const col = row.cells[k];
+				col.innerHTML = this.goals[i + 5*k]["name"];
+			}
+		}
+	}
+
 	generate() {
 		var choices = [];
 		var counts  = new Array(OPTIONS.length).fill(0);
@@ -138,7 +149,6 @@ class Bingo {
 						if (!choices.includes(opt)) {
 							counts[c] += 1;
 							choices.push(opt);
-							col.innerHTML = opt;
 							filled = true;
 							this.goals.push({"name": opt});
 						}
@@ -146,6 +156,7 @@ class Bingo {
 				}
 			}
 		}
+		shuffleArray(this.goals);
 	}
 
 	add_listeners() {
@@ -166,3 +177,10 @@ class Bingo {
 	}
 }
 
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
