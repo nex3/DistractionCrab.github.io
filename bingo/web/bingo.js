@@ -114,6 +114,11 @@ class Bingo {
 	constructor(options) {
 		this.options = options;
 		this.add_listeners();
+		this.goals = []
+	}
+
+	get_goal_string() {
+		return JSON.stringify(this.goals);
 	}
 
 	generate() {
@@ -135,6 +140,7 @@ class Bingo {
 							choices.push(opt);
 							col.innerHTML = opt;
 							filled = true;
+							this.goals.push({"name": opt});
 						}
 					}
 				}
