@@ -118,6 +118,11 @@ const OPTIONS = [
 		"Three-Story Pagoda Memo",
 		"Valley Apparitions Memo"
 	])),
+	new Option('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
+	new Option('Kill {0} minibosses in one attempt', O([4, 5, 6])),
+	new Option('Kill a boss without attacking (except deathblows)'),
+	new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)'),
+	new Option('Accumulate 10 skill points (20 if skills are items)'),
 ]
 
 function main() {
