@@ -123,6 +123,11 @@ const OPTIONS = [
 	new Option('Kill a boss without attacking (except deathblows)'),
 	new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)'),
 	new Option('Accumulate 10 skill points (20 if skills are items)'),
+	new Option('Never use a temporary buff item'),
+	new Option('Never use a healing consumable {0}', S(['', 'except Pellets'])),
+	new Option('Never use a prosthetic tool'),
+	new Option('Never use a stealth kill'),
+	new Option('Do not exceed {0} gourd charges', O([3, 4, 5])),
 ]
 
 function main() {
