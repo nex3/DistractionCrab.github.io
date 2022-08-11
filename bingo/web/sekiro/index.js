@@ -6,20 +6,19 @@ const OPTIONS = [
 		"Gachiin's Spiritfall",
 		"Ungo's Spiritfall"
 	])),
-	new Option('Receive all three items from a hag.'),
-	new Option("Complete Kotaro's questline."),
+	new Option("Complete Kotaro's questline (any ending)"),
 	new Option('Kill {0} Ashina Generals', O([1, 2, 3])),
 	new Option('Kill {0} Shichimen Warriors', O([1, 2, 3])),
 	new Option('Kill {0} Headless', O([1, 2, 3, 4, 5])),
 	new Option('Kill {0} Lone Shadows', O([1, 2, 3, 4])),
 	new Option('Kill {0} Centipedes', O([1, 2])),
-	new Option('Defeat {0}', S([
+	new Option('Kill {0}', S([
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
 	])),
-	new Option('Obtain {0}', S([
-		'Lotus',
+	new Option('Find {0}', S([
+		'Lotus of the Palace',
 		'Shelter Stone', 
 		'Aromatic Branch',
 		'Frozen Tears',
@@ -38,8 +37,8 @@ const OPTIONS = [
 		'Divine Abduction',
 		'Finger Whistle'
 	])),
-	new Option('Find {0}', S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
-	new Option('Collect {0} Prayer necklaces', O([5, 6, 7, 8, 9, 10])),
+	new Option('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
+	new Option('Collect {0} prayer necklaces', O([5, 6, 7, 8, 9, 10])),
 	new Option('Collect {0} gourd seeds', O([5, 6, 7, 8, 9])),
 	new Option('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8])),
 	new Option('Collect both Serpent Viscera'),
@@ -59,12 +58,12 @@ const OPTIONS = [
 		'Great White Whisker',
 		'Red Carp Eyes',
 	])),
-	new Option('Do not use Mortal Draw'),
-	new Option('Possess {0} sen at some point', R(5000, 15000)),
+	new Option('Do not use either Mortal Draw'),
+	new Option('Possess at least {0} sen at some point', R(5000, 15000)),
 	new Option('Find {0}', S(['Purple Gourd', 'Green Gourd', 'Red Gourd'])),
 	new Option('Collect {0} carp scales', R(5, 20)),
-	new Option('Have the Demon Bell Debuff for {0} bosses.', O([1, 2, 3])),
-	new Option('Collect the {0} upgrade', S([
+	new Option('Defeat {0} bosses with Bell Demon (not Shizu/Noble)', O([1, 2, 3])),
+	new Option('Upgrade to the {0}', S([
 		'Lazulite Axe',
 		'Sparking Axe',
 		'Spring-load Axe',
@@ -119,7 +118,7 @@ const OPTIONS = [
 		"Valley Apparitions Memo"
 	])),
 	new Option('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
-	new Option('Kill {0} minibosses in one attempt', O([4, 5, 6])),
+	new Option('Kill {0} minibosses in one attempt (not Shizu/Noble)', O([4, 5, 6])),
 	new Option('Kill a boss without attacking (except deathblows)'),
 	new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)'),
 	new Option('Accumulate 10 skill points (20 if skills are items)'),
