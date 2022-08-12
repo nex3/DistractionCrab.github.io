@@ -51,6 +51,8 @@ const OPTIONS = [
 	new Option('Collect {0} gourd seeds', 100, O([5, 6, 7, 8, 9])),
 	new Option('Do not exceed {0} Attack Power', 100, O([4, 5, 6, 7, 8])),
 	new Option('Collect both Serpent Viscera', 100),
+	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
+	new Option('Collect {0} beverages', 100, O([5, 6, 7, 8, 9])),
 	new Option('Learn the {0} skill', 100, N(2, [
 		'Empowered Mortal Draw',
 		'Virtuous Deeds',
@@ -128,14 +130,25 @@ const OPTIONS = [
 	])),
 	new Option('Kill {0} memory bosses in one attempt', 100, O([1, 2, 3])),
 	new Option('Kill {0} minibosses in one attempt (not Shizu/Noble)', 100, O([4, 5, 6])),
+	new Option('Kill {0} bosses without taking damage (not Shizu/Noble)', 100, O([4, 5, 6])),
 	new Option('Kill a boss without attacking (except deathblows)', 100),
 	new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)', 100),
 	new Option('Accumulate 10 skill points (20 if skills are items)', 100),
 	new Option('Never use a temporary buff item', 100),
 	new Option('Never use a healing consumable {0}', 100, S(['', 'except Pellets'])),
-	new Option('Never use a prosthetic tool', 100),
+	new Option('Never use a prosthetic tool in combat', 100),
 	new Option('Never use a stealth kill', 100),
 	new Option('Do not exceed {0} gourd charges', 100, O([3, 4, 5])),
+	new Option('Kill all enemies {0}', 100, O([
+		'in the Senpou Temple attic',
+		"in Doujun's cave",
+		'guarding Monkey Booze in Bodhisattva Valley',
+	]),
+	new Option('Kill the miniboss {0}', 100, O([
+		'in Temple Grounds without using the rafters',
+		'in Bamboo Thicket Slope without leaving the courtyard',
+		'on the Ashina Castle stairs without killing the mobs',
+	]),
 ]
 
 var BINGO = new Bingo(OPTIONS);
