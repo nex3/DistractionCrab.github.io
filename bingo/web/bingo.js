@@ -54,9 +54,10 @@ function R(min, max) { return new Range(min, max); }
 class Option {
 	// Weight starts at 100 so that any value between 0 to 100 will give a relative percentage that
 	// can be somewhat intuitively understood.
-	constructor(desc, ) {
+	constructor(desc, weight) {
 		this.desc = desc;
-		this.options = [...arguments].slice(1);
+		this.weight = weight;
+		this.options = [...arguments].slice(2);
 	}
 
 	count() {
@@ -140,7 +141,7 @@ class Bingo {
 		var choices = [];
 		var counts  = new Array(this.options.length).fill(0);
 		const table = document.getElementById('bingo-table');
-		//const weights = this.options.map(x => x.weight);
+		const weights = this.options.map(x => x.weight);
 		//console.log(weights.toString())
 
 		for (var i = 0; i < 5; ++i) {
@@ -152,8 +153,8 @@ class Bingo {
 					const c = randInt(this.options.length);
 					if (counts[c] < this.options[c].count()) {
 						//var opt = this.options[c].select();
-						//var opt = chance.weighted(this.options, weights).select(this.rng);
-						var opt = this.rng.pickone(this.options).select(this.rng);
+						var opt = this.rng.weighted(this.options, weights).select(this.rng);
+						//var opt = this.rng.pickone(this.options).select(this.rng);
 						//console.log(opt)
 						if (!choices.includes(opt)) {
 							counts[c] += 1;
