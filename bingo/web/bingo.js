@@ -139,30 +139,26 @@ class Bingo {
 
 	generate() {
 		var choices = [];
-		var counts  = new Array(this.options.length).fill(0);
+		var counts  = new Map();
 		const table = document.getElementById('bingo-table');
 		const weights = this.options.map(x => x.weight);
 		//console.log(weights.toString())
 
 		for (var i = 0; i < 5; ++i) {
-			const row = table.rows[i];
 			for (var k = 0; k < 5; ++k) {
-				var filled = false;
-				const col = row.cells[k];
-				while (!filled) {
-					const c = randInt(this.options.length);
-					if (counts[c] < this.options[c].count()) {
-						//var opt = this.options[c].select();
-						var opt = this.rng.weighted(this.options, weights).select(this.rng);
-						//var opt = this.rng.pickone(this.options).select(this.rng);
-						//console.log(opt)
-						if (!choices.includes(opt)) {
-							counts[c] += 1;
-							choices.push(opt);
-							filled = true;
-							this.goals.push({"name": opt});
-						}
-					}
+				while (true) {
+					const option = this.rng.weighted(this.options, weights);
+					if (!counts.has(option)) counts.set(option, 0);
+					const count = counts.get(option);
+					if (count >= option.count()) continue;
+
+					var opt = option.select(this.rng);
+					if (choices.includes(opt)) continue;
+
+					counts.set(option, count + 1);
+					choices.push(opt);
+					this.goals.push({"name": opt});
+					break;
 				}
 			}
 		}
