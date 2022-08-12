@@ -6,13 +6,22 @@ const OPTIONS = [
 		"Gachiin's Spiritfall",
 		"Ungo's Spiritfall"
 	])),
-	new Option("Complete Kotaro's questline (any ending)"),
-	new Option('Kill {0} Ashina Generals', O([1, 2, 3])),
-	new Option('Kill {0} Shichimen Warriors', O([1, 2, 3])),
+	new Option('Receive all three items from a hag.'),
+	new Option("Complete Kotaro's questline."),
+	new Option('Kill {0} Ashina Generals', O([2, 3])),
+	new Option('Kill {0} Shichimen Warriors', O([2, 3])),
 	new Option('Kill {0} Headless', O([1, 2, 3, 4, 5])),
-	new Option('Kill {0} Lone Shadows', O([1, 2, 3, 4])),
-	new Option('Kill {0} Centipedes', O([1, 2])),
-	new Option('Kill {0}', S([
+	new Option('Kill {0} Lone Shadows', O([2, 3, 4])),
+	new Option('Kill {0} Drunkards, Gluttons, and/or Red Guards', O([2, 3, 4])),
+	new Option('Kill both {0}', S([
+		'Centipedes',
+		'Snake-Eyes',
+		'Seven Ashina Spears',
+		'Bulls',
+		'Ogres',
+		'Ashina Elites',
+	])),
+	new Option('Defeat {0}', S([
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
