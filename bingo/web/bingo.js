@@ -10,9 +10,8 @@ class Select {
 		return this.items.length;
 	}
 
-	select() {
-		var index = Math.random() * this.items.length;
-		return this.items[Math.floor(index)];
+	select(rng) {
+		return rng.pickone(this.items);
 	}
 }
 
@@ -42,10 +41,8 @@ class Range {
 		return 1;
 	}
 
-	select() {
-		var value = Math.random();
-		value = this.min + value * (this.max - this.min + 1);
-		return Math.floor(value);
+	select(rng) {
+		return rng.integer({ min: this.min, max: this.max })
 	}
 }
 
@@ -55,7 +52,9 @@ function N(n, items) { return new SelectN(n, items); }
 function R(min, max) { return new Range(min, max); }
 
 class Option {
-	constructor(desc) {
+	// Weight starts at 100 so that any value between 0 to 100 will give a relative percentage that
+	// can be somewhat intuitively understood.
+	constructor(desc, ) {
 		this.desc = desc;
 		this.options = [...arguments].slice(1);
 	}
@@ -72,11 +71,11 @@ class Option {
 		}
 	}
 
-	select() {
+	select(rng) {
 		if (this.options.length > 0) {
 			var str = this.desc;
 			for (var i = 0; i < this.options.length; ++i) {
-				str = str.replace(`{${i}}`, this.options[i].select());
+				str = str.replace(`{${i}}`, this.options[i].select(rng));
 			}
 
 			return str;
@@ -111,10 +110,14 @@ class CellState {
 }
 
 class Bingo {
-	constructor(options) {
+	constructor(options, seed=-1) {
 		this.options = options;
-		this.add_listeners();
 		this.goals = []
+		if (seed < 0) {
+			this.rng = chance;
+		} else {
+			this.rng = new Chance(seed);
+		}
 	}
 
 	get_goal_string() {
@@ -130,12 +133,15 @@ class Bingo {
 				col.innerHTML = this.goals[i + 5*k]["name"];
 			}
 		}
+		this.add_listeners();
 	}
 
 	generate() {
 		var choices = [];
-		var counts  = new Array(OPTIONS.length).fill(0);
+		var counts  = new Array(this.options.length).fill(0);
 		const table = document.getElementById('bingo-table');
+		//const weights = this.options.map(x => x.weight);
+		//console.log(weights.toString())
 
 		for (var i = 0; i < 5; ++i) {
 			const row = table.rows[i];
@@ -143,9 +149,12 @@ class Bingo {
 				var filled = false;
 				const col = row.cells[k];
 				while (!filled) {
-					const c = randInt(OPTIONS.length);
-					if (counts[c] < OPTIONS[c].count()) {
-						var opt = OPTIONS[c].select();
+					const c = randInt(this.options.length);
+					if (counts[c] < this.options[c].count()) {
+						//var opt = this.options[c].select();
+						//var opt = chance.weighted(this.options, weights).select(this.rng);
+						var opt = this.rng.pickone(this.options).select(this.rng);
+						//console.log(opt)
 						if (!choices.includes(opt)) {
 							counts[c] += 1;
 							choices.push(opt);
@@ -156,7 +165,8 @@ class Bingo {
 				}
 			}
 		}
-		shuffleArray(this.goals);
+		//shuffleArray(this.goals);
+		this.rng.shuffle(this.goals);
 	}
 
 	add_listeners() {
@@ -176,6 +186,8 @@ class Bingo {
 		}	
 	}
 }
+
+
 
 
 function shuffleArray(array) {

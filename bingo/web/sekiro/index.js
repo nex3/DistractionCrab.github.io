@@ -138,10 +138,17 @@ const OPTIONS = [
 	new Option('Do not exceed {0} gourd charges', O([3, 4, 5])),
 ]
 
+var BINGO = new Bingo(OPTIONS);
+
 function main() {
-	const bingo = new Bingo(OPTIONS);
-	bingo.generate();
-	bingo.write_to_board()
+	BINGO.generate();
+	BINGO.write_to_board()
+}
+
+function seed() {
+	var text = document.getElementById("seed").value;
+	BINGO = new Bingo(OPTIONS, text);
+	main();
 }
 
 document.addEventListener('DOMContentLoaded', main, false);

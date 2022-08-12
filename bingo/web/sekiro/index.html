@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Sekiro Bingomizer</title>
+	<script src="http://chancejs.com/chance.min.js"></script>
 	<script type="text/javascript" src="../bingo.js"></script>
 	<script type="text/javascript" src="index.js"></script>
 	<link rel="stylesheet" type="text/css" href="index.css">
@@ -67,6 +68,14 @@
 			</td>
 			<td id='r5c5'>
 			</td>
+		</tr>
+	</table>
+	<table>
+		<tr>
+			<td>
+				<button onclick="seed()">Regenerate with Seed</button>
+			</td>
+			<td><input type="text" id="seed" width="50px"></td>
 		</tr>
 	</table>
 </body>
