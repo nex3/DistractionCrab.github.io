@@ -143,12 +143,12 @@ const OPTIONS = [
 		'in the Senpou Temple attic',
 		"in Doujun's cave",
 		'guarding Monkey Booze in Bodhisattva Valley',
-	]),
+	])),
 	new Option('Kill the miniboss {0}', 100, O([
 		'in Temple Grounds without using the rafters',
 		'in Bamboo Thicket Slope without leaving the courtyard',
 		'on the Ashina Castle stairs without killing the mobs',
-	]),
+	])),
 ]
 
 var BINGO = new Bingo(OPTIONS);
