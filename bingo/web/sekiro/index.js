@@ -6,8 +6,7 @@ const OPTIONS = [
 		"Gachiin's Spiritfall",
 		"Ungo's Spiritfall"
 	])),
-	new Option('Receive all three items from a hag.', 100),
-	new Option("Complete Kotaro's questline.", 100),
+	new Option("Complete Kotaro's questline (any ending)", 100),
 	new Option('Kill {0} Ashina Generals', 100, O([2, 3])),
 	new Option('Kill {0} Shichimen Warriors', 100, O([2, 3])),
 	new Option('Kill {0} Headless', 100, O([1, 2, 3, 4, 5])),
@@ -143,12 +142,12 @@ const OPTIONS = [
 		'in the Senpou Temple attic',
 		"in Doujun's cave",
 		'guarding Monkey Booze in Bodhisattva Valley',
-	]),
+	])),
 	new Option('Kill the miniboss {0}', 100, O([
 		'in Temple Grounds without using the rafters',
 		'in Bamboo Thicket Slope without leaving the courtyard',
 		'on the Ashina Castle stairs without killing the mobs',
-	]),
+	])),
 ]
 
 var BINGO = new Bingo(OPTIONS);
