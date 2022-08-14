@@ -51,7 +51,6 @@ const OPTIONS = [
 	new Option('Find {0} Ninjutsu', 100, S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
 	new Option('Collect {0} prayer necklaces', 100, O([5, 6, 7, 8, 9, 10])),
 	new Option('Collect {0} gourd seeds', 100, O([5, 6, 7, 8, 9])),
-	new Option('Do not exceed {0} Attack Power', 100, O([4, 5, 6, 7, 8])),
 	new Option('Collect both Serpent Viscera', 100),
 	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
 	new Option('Collect {0} beverages', 100, O([5, 6, 7, 8, 9])),
@@ -71,7 +70,6 @@ const OPTIONS = [
 		'Great White Whisker',
 		'Red Carp Eyes',
 	])),
-	new Option('Do not use either Mortal Draw', 100),
 	new Option('{0}', 100, O([
 		new Option('Possess at least {0} sen at some point', 100, R(5000, 15000)),
 		new Option('Buy all limited-stock items from {0} and {0}', 100, O([
@@ -154,20 +152,27 @@ const OPTIONS = [
 		new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)', 100),
 	])),
 	new Option('Accumulate 10 skill points (20 if skills are items)', 100),
-	new Option('Never use a temporary buff item', 100),
-	new Option('Never use a healing consumable {0}', 100, S(['', 'except Pellets'])),
-	new Option('Never use a prosthetic tool in combat', 100),
-	new Option('Never use a stealth kill {0}', 100, O(['', 'on a boss'])),
-	new Option('Do not exceed {0} gourd charges', 100, O([3, 4, 5])),
+	new Option('{0}', 100, N(2, [
+		new Option('Do not use {0}', 100, O(['any combat art', 'either Mortal Draw'])),
+		'Never use a temporary buff item',
+		'Never use a prosthetic tool in combat',
+		new Option('Never use a stealth kill {0}', 100, O(['', 'on a boss'])),
+		new Option('Do not exceed {0} Attack Power', 100, O([4, 5, 6, 7, 8])),
+		O([
+			new Option('Do not exceed {0} gourd charges', 100, O([3, 4, 5])),
+			new Option('Never use a healing consumable {0}', 100, S(['', 'except Pellets'])),
+		]),
+	])),
 	new Option('Kill all enemies {0}', 100, O([
 		'in the Senpou Temple attic',
 		"in Doujun's cave",
 		'guarding Monkey Booze in Bodhisattva Valley',
 	])),
-	new Option('Kill the miniboss {0}', 100, O([
+	new Option('Kill the miniboss {0}', 100, S([
 		'in Temple Grounds without using the rafters',
 		'in Bamboo Thicket Slope without leaving the courtyard',
 		'on the Ashina Castle stairs without killing the mobs',
+		'in the tutorial'
 	])),
 	new Option('Kill the minibosses {0} and {0}', 100, O([
 		'on the Ashina Castle stairs',
