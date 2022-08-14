@@ -7,11 +7,14 @@ class Select {
 	}
 
 	count() {
-		return this.items.length;
+		return this.items
+			.map(item => typeof item === 'object' ? item : 1)
+			.reduce((a, b) => a + b);
 	}
 
 	select(rng) {
-		return rng.pickone(this.items);
+		const choice = rng.pickone(this.items);
+		return typeof choice === 'object' ? choice.select(rng) : choice;
 	}
 }
 
@@ -55,6 +58,8 @@ class Option {
 	// Weight starts at 100 so that any value between 0 to 100 will give a relative percentage that
 	// can be somewhat intuitively understood.
 	constructor(desc, weight) {
+		if (!weight) throw new Error("An Option must have a weight.");
+
 		this.desc = desc;
 		this.weight = weight;
 		this.options = [...arguments].slice(2);
@@ -76,7 +81,17 @@ class Option {
 		if (this.options.length > 0) {
 			var str = this.desc;
 			for (var i = 0; i < this.options.length; ++i) {
-				str = str.replace(`{${i}}`, this.options[i].select(rng));
+				// Allow the option format to specify the same number multiple
+				// times to select different values from the options.
+				const seen = new Set();
+				str = str.replaceAll(`{${i}}`, () => {
+					while (true) {
+						const choice = this.options[i].select(rng);
+						if (seen.has(choice)) continue;
+						seen.add(choice);
+						return choice;
+					}
+				});
 			}
 
 			return str;
@@ -139,30 +154,26 @@ class Bingo {
 
 	generate() {
 		var choices = [];
-		var counts  = new Array(this.options.length).fill(0);
+		var counts  = new Map();
 		const table = document.getElementById('bingo-table');
 		const weights = this.options.map(x => x.weight);
-		//console.log(weights.toString())
+		console.log(weights.toString())
 
 		for (var i = 0; i < 5; ++i) {
-			const row = table.rows[i];
 			for (var k = 0; k < 5; ++k) {
-				var filled = false;
-				const col = row.cells[k];
-				while (!filled) {
-					const c = randInt(this.options.length);
-					if (counts[c] < this.options[c].count()) {
-						//var opt = this.options[c].select();
-						var opt = this.rng.weighted(this.options, weights).select(this.rng);
-						//var opt = this.rng.pickone(this.options).select(this.rng);
-						//console.log(opt)
-						if (!choices.includes(opt)) {
-							counts[c] += 1;
-							choices.push(opt);
-							filled = true;
-							this.goals.push({"name": opt});
-						}
-					}
+				while (true) {
+					const option = this.rng.weighted(this.options, weights);
+					if (!counts.has(option)) counts.set(option, 0);
+					const count = counts.get(option);
+					if (count >= option.count()) continue;
+
+					var opt = option.select(this.rng);
+					if (choices.includes(opt)) continue;
+
+					counts.set(option, count + 1);
+					choices.push(opt);
+					this.goals.push({"name": opt});
+					break;
 				}
 			}
 		}
