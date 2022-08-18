@@ -26,8 +26,9 @@ const OPTIONS = [
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
+		'3 Genichiros',
 	])),
-	new Option("Kill both bosses in the Guardian Ape's Burrow", 100),
+	new Option("Kill both mini/bosses in the Guardian Ape's Burrow", 100),
 	new Option('Find {0}', 100, S([
 		'Lotus of the Palace',
 		'Shelter Stone', 
@@ -36,7 +37,7 @@ const OPTIONS = [
 		'Divine Dragon Tears',
 		'Aromatic Flower'
 	])),
-	new Option('Find {0}', 100, N(2, [
+	new Option('Fit the {0} tool', 100, N(2, [
 		'Shuriken',
 		'Flame Vent',
 		'Firecrackers',
@@ -53,7 +54,7 @@ const OPTIONS = [
 	new Option('Collect {0} gourd seeds', 100, O([5, 6, 7, 8, 9])),
 	new Option('Collect both Serpent Viscera', 100),
 	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
-	new Option('Collect {0} beverages', 100, O([5, 6, 7, 8, 9])),
+	new Option('Collect {0} beverages', 100, R(6, 10)),
 	new Option('Learn the {0} skill', 100, N(2, [
 		'Empowered Mortal Draw',
 		'Virtuous Deeds',
@@ -89,7 +90,7 @@ const OPTIONS = [
 		new Option('Collect {0} carp scales', 100, R(5, 20)),
 		new Option('Buy all items from one Pot Noble', 100),
 	])),
-	new Option('Defeat {0} bosses with Bell Demon (not Shizu/Noble)', 100, O([1, 2, 3])),
+	new Option('Defeat {0} mini/bosses with Bell Demon (not Shizu/Noble)', 100, O([1, 2, 3])),
 	new Option('Upgrade to the {0}', 100, S([
 		'Lazulite Axe',
 		'Sparking Axe',
@@ -144,34 +145,51 @@ const OPTIONS = [
 		"Three-Story Pagoda Memo",
 		"Valley Apparitions Memo"
 	])),
-	new Option('{0}', 100, N(2, [
+	new Option('{0}', 100, N(3, [
 		new Option('Kill {0} memory bosses in one attempt', 100, O([1, 2, 3])),
 		new Option('Kill {0} minibosses in one attempt (not Shizu/Noble)', 100, O([4, 5, 6])),
-		new Option('Kill {0} bosses without taking damage (not Shizu/Noble)', 100, O([4, 5, 6])),
-		new Option('Kill a boss without attacking (except deathblows)', 100),
-		new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)', 100),
+		new Option('Kill {0} mini/bosses without taking damage (not Shizu/Noble)', 100, O([4, 5, 6])),
+		'Kill a mini/boss without attacking (except deathblows)',
+		'Kill a mini/boss without blocking/deflecting (not Shizu/Noble)',
+		'Kill a mini/boss without touching the control stick or arrow keys (not Shizu/Noble)',
+		'Kill a mini/boss using only combat arts (not Shizu/Noble)',
 	])),
-	new Option('Accumulate 10 skill points (20 if skills are items)', 100),
+	new Option('Accumulate {0} skill points ({1} if skills are items)', 100, R(8, 12), R(16, 22)),
 	new Option('{0}', 100, N(2, [
 		new Option('Do not use {0}', 100, O(['any combat art', 'either Mortal Draw'])),
-		'Never use a temporary buff item',
-		'Never use a prosthetic tool in combat',
-		new Option('Never use a stealth kill {0}', 100, O(['', 'on a boss'])),
+		'Never use a temporary buff item except Divine Confetti',
+		'Never use a stealth kill on a mini/boss',
 		new Option('Do not exceed {0} Attack Power', 100, O([4, 5, 6, 7, 8])),
+		O([
+			'Never use a prosthetic tool in combat',
+			new Option('{0} use bladed prosthetic tools in combat', 100, O(['Exclusively', 'Never'])),
+			new Option('{0} use fire prosthetic tools in combat', 100, O(['Exclusively', 'Never'])),
+			new Option(
+				'Exclusively use prosthetic tools that cost {0} spirit emblems in combat',
+				100,
+				O([1, 2, 3])
+			),
+		]),
 		O([
 			new Option('Do not exceed {0} gourd charges', 100, O([3, 4, 5])),
 			new Option('Never use a healing consumable {0}', 100, S(['', 'except Pellets'])),
 		]),
 	])),
-	new Option('Kill all enemies {0}', 100, O([
+	new Option('Kill all enemies {0}', 100, S([
 		'in the Senpou Temple attic',
 		"in Doujun's cave",
 		'guarding Monkey Booze in Bodhisattva Valley',
+		'in the Hidden Forest temple grove before clearing the mist',
 	])),
 	new Option('Kill the miniboss {0}', 100, S([
 		'in Temple Grounds without using the rafters',
-		'in Bamboo Thicket Slope without leaving the courtyard',
-		'on the Ashina Castle stairs without killing the mobs',
+		new Option('{0} without killing the mobs', 100, O([
+			'on the Ashina castle stairs',
+			'by the Hidden Forest campfire',
+			'in the Hirata Estate Main Hall',
+			'before the Ashina Castle idol',
+			'before the Underbridge Valley idol',
+		])),
 		'in the tutorial'
 	])),
 	new Option('Kill the minibosses {0} and {0}', 100, O([
@@ -186,6 +204,13 @@ const OPTIONS = [
 		'in the Serpent Shrine',
 		'by the Hidden Forest campfire',
 		'on the Ashina Castle ground floor',
+	])),
+	new Option('Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel', 100),
+	new Option('Get {0} deathblows without resting, dying, or fast travel', 100, R(15, 30)),
+	new Option('{0}', 100, O([
+		new Option('Collect at least {0} {1}', 100, R(40, 60), O(['Scrap Iron', 'Scrap Magnetite'])),
+		new Option('Collect at least {0} {1}', 100, R(30, 45), O(['Adamantine Scrap', 'Black Gunpowder', 'Yellow Gunpowder'])),
+		new Option('Collect at least {0} {1}', 100, R(15, 25), O(['Fulminated Mercury', 'Lump of Fat Wax', 'Lump of Grave Wax'])),
 	])),
 ]
 
