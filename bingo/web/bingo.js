@@ -133,7 +133,7 @@ class Format extends Option {
 
 /// Wraps another option and gives it a specific weight.
 class Weight extends Option {
-	construction(weight, option) {
+	constructor(weight, option) {
 		super();
 		this.weight = weight;
 		this.option = option;
