@@ -1,5 +1,5 @@
 const OPTIONS = [
-	new Option('Find {0}', S([
+	F('Find {0}', S([
 		"Firekeeper's Eyes",
 		"Soul a Firekeeper",
 		"Dragon Torso Stone",
@@ -8,12 +8,12 @@ const OPTIONS = [
 		"Twinkling Dragon Head Stone",
 		"Coiled Sword Fragment",
 	])),
-	new Option("Complete Siegward's Questline."),
-	new Option('Kill {0} Monstrosities of Sin', O([1, 2, 3])),
-	new Option('Kill {0} Pontiff Beasts', O([1, 2, 3])),
-	new Option('Kill {0} Deep Accursed', O([1, 2])),
-	new Option('Kill {0} Demons', O([1, 2, 3, 4])),
-	new Option('Find {0}', N(5, [
+	F("Complete Siegward's Questline."),
+	F('Kill {0} Monstrosities of Sin', O([1, 2, 3])),
+	F('Kill {0} Pontiff Beasts', O([1, 2, 3])),
+	F('Kill {0} Deep Accursed', O([1, 2])),
+	F('Kill {0} Demons', O([1, 2, 3, 4])),
+	F('Find {0}', N(5, [
 		'Irithyll Straight Sword',
 		'Irithyll Rapier',
 		"Anri's Straightsword",
@@ -81,12 +81,12 @@ const OPTIONS = [
 		"White Hair Talisman",
 		"Caitha's Chime"
 	])),
-	new Option('Collect {0} Estus Shards', O([5, 6, 7, 8, 9, 10, 11, 12, 13, 14])),
-	new Option('Collect {0} Undead Bone Shards', O([5, 6, 7, 8, 9])),
-	new Option('Do not exceed level {0}', O([40, 50, 60, 70, 80])),
-	new Option('Possess {0} souls at some point', R(100000, 400000)),
-	new Option("Kill {0} Elder Ghru", O([1, 2, 3, 4, 5, 6])),
-	new Option("Use {0}'s Soul", N(3, [
+	F('Collect {0} Estus Shards', O([5, 6, 7, 8, 9, 10, 11, 12, 13, 14])),
+	F('Collect {0} Undead Bone Shards', O([5, 6, 7, 8, 9])),
+	F('Do not exceed level {0}', O([40, 50, 60, 70, 80])),
+	F('Possess {0} souls at some point', R(100000, 400000)),
+	F("Kill {0} Elder Ghru", O([1, 2, 3, 4, 5, 6])),
+	F("Use {0}'s Soul", N(3, [
 		"Vordt",
 		"Greatwood",
 		"Gundyr",
@@ -108,7 +108,7 @@ const OPTIONS = [
 		"Nameless King",
 		"Soul of Cinder"
 	])),
-	new Option("Defeat {0} with a {1} only", 
+	F("Defeat {0} with a {1} only", 
 		O([
 			"Soul of Cinder",
 			"Vordt",
