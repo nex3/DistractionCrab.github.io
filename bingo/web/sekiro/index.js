@@ -1,19 +1,19 @@
-const OPTIONS = [
-	new Option('Find {0}', 100, S([
+const OPTIONS = S([
+	F('Find {0}', S([
 		"Gokan's Spiritfall",
 		"Yashariku's Spiritfall",
 		"Ako's Spiritfall",
 		"Gachiin's Spiritfall",
 		"Ungo's Spiritfall"
 	])),
-	new Option("Complete Kotaro's questline (any ending)", 100),
-	new Option('{0}', 100, N(3, [
-		new Option('Kill {0} Ashina Generals', 100, O([2, 3])),
-		new Option('Kill {0} Shichimen Warriors', 100, O([2, 3])),
-		new Option('Kill {0} Headless', 100, O([1, 2, 3, 4, 5])),
-		new Option('Kill {0} Lone Shadows', 100, O([2, 3, 4])),
-		new Option('Kill {0} Drunkards, Gluttons, and/or Red Guards', 100, O([2, 3, 4])),
-		new Option('Kill both {0}', 100, S([
+	"Complete Kotaro's questline (any ending)",
+	N(3, [
+		F('Kill {0} Ashina Generals', O([2, 3])),
+		F('Kill {0} Shichimen Warriors', O([2, 3])),
+		F('Kill {0} Headless', O([1, 2, 3, 4, 5])),
+		F('Kill {0} Lone Shadows', O([2, 3, 4])),
+		F('Kill {0} Drunkards, Gluttons, and/or Red Guards', O([2, 3, 4])),
+		F('Kill both {0}', S([
 			'Centipedes',
 			'Snake-Eyes',
 			'Seven Ashina Spears',
@@ -21,14 +21,15 @@ const OPTIONS = [
 			'Ogres',
 			'Ashina Elites',
 		])),
-	])),
-	new Option('Defeat {0}', 100, S([
+	]),
+	F('Defeat {0}', S([
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
+		'3 Genichiros',
 	])),
-	new Option("Kill both bosses in the Guardian Ape's Burrow", 100),
-	new Option('Find {0}', 100, S([
+	"Kill both mini/bosses in the Guardian Ape's Burrow",
+	F('Find {0}', S([
 		'Lotus of the Palace',
 		'Shelter Stone', 
 		'Aromatic Branch',
@@ -36,7 +37,7 @@ const OPTIONS = [
 		'Divine Dragon Tears',
 		'Aromatic Flower'
 	])),
-	new Option('Find {0}', 100, N(2, [
+	F('Fit the {0} tool', N(2, [
 		'Shuriken',
 		'Flame Vent',
 		'Firecrackers',
@@ -48,13 +49,13 @@ const OPTIONS = [
 		'Divine Abduction',
 		'Finger Whistle'
 	])),
-	new Option('Find {0} Ninjutsu', 100, S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
-	new Option('Collect {0} prayer necklaces', 100, O([5, 6, 7, 8, 9, 10])),
-	new Option('Collect {0} gourd seeds', 100, O([5, 6, 7, 8, 9])),
-	new Option('Collect both Serpent Viscera', 100),
+	F('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
+	F('Collect {0} prayer necklaces', O([5, 6, 7, 8, 9, 10])),
+	F('Collect {0} gourd seeds', O([5, 6, 7, 8, 9])),
+	'Collect both Serpent Viscera',
 	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
-	new Option('Collect {0} beverages', 100, O([5, 6, 7, 8, 9])),
-	new Option('Learn the {0} skill', 100, N(2, [
+	F('Collect {0} beverages', R(6, 10)),
+	F('Learn the {0} skill', N(2, [
 		'Empowered Mortal Draw',
 		'Virtuous Deeds',
 		'Most Virtuous Deeds',
@@ -62,7 +63,7 @@ const OPTIONS = [
 		'Projected Force',
 		'Chasing Slice',
 	])),
-	new Option('Find {0} ', 100, S([
+	F('Find {0} ', S([
 		'Dragon Tally Board',
 		'Water of the Palace',
 		'Rice for Kuro',
@@ -70,9 +71,9 @@ const OPTIONS = [
 		'Great White Whisker',
 		'Red Carp Eyes',
 	])),
-	new Option('{0}', 100, O([
-		new Option('Possess at least {0} sen at some point', 100, R(5000, 15000)),
-		new Option('Buy all limited-stock items from {0} and {0}', 100, O([
+	O([
+		F('Possess at least {0} sen at some point', R(5000, 15000)),
+		F('Buy all limited-stock items from {0} and {0}', S([
 			"Crow's Bed Memorial Mob",
 			'Battlefield Memorial Mob',
 			'Blackhat Badger',
@@ -83,14 +84,14 @@ const OPTIONS = [
 			'Toxic Memorial Mob',
 			'Exiled Memorial Mob',
 		])),
-	])),
-	new Option('Find {0}', 100, S(['Purple Gourd', 'Green Gourd', 'Red Gourd'])),
-	new Option('{0}', 100, O([
-		new Option('Collect {0} carp scales', 100, R(5, 20)),
-		new Option('Buy all items from one Pot Noble', 100),
-	])),
-	new Option('Defeat {0} bosses with Bell Demon (not Shizu/Noble)', 100, O([1, 2, 3])),
-	new Option('Upgrade to the {0}', 100, S([
+	]),
+	F('Find {0}', S(['Purple Gourd', 'Green Gourd', 'Red Gourd'])),
+	O([
+		F('Collect {0} carp scales', R(5, 20)),
+		'Buy all items from one Pot Noble',
+	]),
+	F('Defeat {0} mini/bosses with Bell Demon (not Shizu/Noble)', O([1, 2, 3])),
+	F('Upgrade to the {0}', S([
 		'Lazulite Axe',
 		'Sparking Axe',
 		'Spring-load Axe',
@@ -122,7 +123,7 @@ const OPTIONS = [
 		'Malcontent',
 		'Mountain Echo'
 	])),
-	new Option('Find {0}', 100, new SelectN(2, [
+	F('Find {0}', new SelectN(2, [
 		'Black Scroll',
 		"Dosaku's Note",
 		"Flame Barrel Memo",
@@ -144,37 +145,53 @@ const OPTIONS = [
 		"Three-Story Pagoda Memo",
 		"Valley Apparitions Memo"
 	])),
-	new Option('{0}', 100, N(2, [
-		new Option('Kill {0} memory bosses in one attempt', 100, O([1, 2, 3])),
-		new Option('Kill {0} minibosses in one attempt (not Shizu/Noble)', 100, O([4, 5, 6])),
-		new Option('Kill {0} bosses without taking damage (not Shizu/Noble)', 100, O([4, 5, 6])),
-		new Option('Kill a boss without attacking (except deathblows)', 100),
-		new Option('Kill a boss without blocking/deflecting (not Shizu/Noble)', 100),
-	])),
-	new Option('Accumulate 10 skill points (20 if skills are items)', 100),
-	new Option('{0}', 100, N(2, [
-		new Option('Do not use {0}', 100, O(['any combat art', 'either Mortal Draw'])),
-		'Never use a temporary buff item',
-		'Never use a prosthetic tool in combat',
-		new Option('Never use a stealth kill {0}', 100, O(['', 'on a boss'])),
-		new Option('Do not exceed {0} Attack Power', 100, O([4, 5, 6, 7, 8])),
+	N(3, [
+		F('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
+		F('Kill {0} minibosses in one attempt (not Shizu/Noble)', O([4, 5, 6])),
+		F('Kill {0} mini/bosses without taking damage (not Shizu/Noble)', O([4, 5, 6])),
+		'Kill a mini/boss without attacking (except deathblows)',
+		'Kill a mini/boss without blocking/deflecting (not Shizu/Noble)',
+		'Kill a mini/boss without touching the control stick or arrow keys (not Shizu/Noble)',
+		'Kill a mini/boss using only combat arts (not Shizu/Noble)',
+	]),
+	F('Accumulate {0} skill points ({1} if skills are items)', R(8, 12), R(16, 22)),
+	N(2, [
+		F('Do not use {0}', O(['any combat art', 'either Mortal Draw'])),
+		'Never use a temporary buff item except Divine Confetti',
+		'Never use a stealth kill on a mini/boss',
+		F('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8])),
 		O([
-			new Option('Do not exceed {0} gourd charges', 100, O([3, 4, 5])),
-			new Option('Never use a healing consumable {0}', 100, S(['', 'except Pellets'])),
+			'Never use a prosthetic tool in combat',
+			F('{0} use bladed prosthetic tools in combat', O(['Exclusively', 'Never'])),
+			F('{0} use fire prosthetic tools in combat', O(['Exclusively', 'Never'])),
+			F(
+				'Exclusively use prosthetic tools that cost {0} spirit emblems in combat',
+				O([1, 2, 3])
+			),
 		]),
-	])),
-	new Option('Kill all enemies {0}', 100, O([
+		O([
+			F('Do not exceed {0} gourd charges', O([3, 4, 5])),
+			F('Never use a healing consumable {0}', S(['', 'except Pellets'])),
+		]),
+	]),
+	F('Kill all enemies {0}', S([
 		'in the Senpou Temple attic',
 		"in Doujun's cave",
 		'guarding Monkey Booze in Bodhisattva Valley',
+		'in the Hidden Forest temple grove before clearing the mist',
 	])),
-	new Option('Kill the miniboss {0}', 100, S([
+	F('Kill the miniboss {0}', S([
 		'in Temple Grounds without using the rafters',
-		'in Bamboo Thicket Slope without leaving the courtyard',
-		'on the Ashina Castle stairs without killing the mobs',
+		F('{0} without killing the mobs', O([
+			'on the Ashina castle stairs',
+			'by the Hidden Forest campfire',
+			'in the Hirata Estate Main Hall',
+			'before the Ashina Castle idol',
+			'before the Underbridge Valley idol',
+		])),
 		'in the tutorial'
 	])),
-	new Option('Kill the minibosses {0} and {0}', 100, O([
+	F('Kill the minibosses {0} and {0}', S([
 		'on the Ashina Castle stairs',
 		'in Temple Grounds',
 		'by the Water Mill',
@@ -187,7 +204,14 @@ const OPTIONS = [
 		'by the Hidden Forest campfire',
 		'on the Ashina Castle ground floor',
 	])),
-]
+	'Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel',
+	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
+	O([
+		F('Collect at least {0} {1}', R(40, 60), O(['Scrap Iron', 'Scrap Magnetite'])),
+		F('Collect at least {0} {1}', R(30, 45), O(['Adamantine Scrap', 'Black Gunpowder', 'Yellow Gunpowder'])),
+		F('Collect at least {0} {1}', R(15, 25), O(['Fulminated Mercury', 'Lump of Fat Wax', 'Lump of Grave Wax'])),
+	]),
+]);
 
 var BINGO = new Bingo(OPTIONS);
 

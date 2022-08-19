@@ -1,26 +1,49 @@
 const INACTIVE = 'bingo-inactive';
 const ACTIVE = 'bingo-active';
 
-class Select {
-	constructor(items) {
-		this.items = items;
-	}
-
-	count() {
-		return this.items
-			.map(item => typeof item === 'object' ? item : 1)
-			.reduce((a, b) => a + b);
-	}
-
-	select(rng) {
-		const choice = rng.pickone(this.items);
-		return typeof choice === 'object' ? choice.select(rng) : choice;
-	}
+/// The abstract base class of various ways of describing bingo options.
+///
+/// Option classes are immutable. When it's time to generate squares for a new
+/// board, the `build()` method is called to return a mutable generator that can
+/// track state over time (for example, to ensure the same option isn't selected
+/// more than once).
+class Option {
+  /// Returns a generator object given a random number generator. In addition to
+  /// storing private state, this object must expose a `select()` method that
+  /// returns either a new unique option or null/undefined to indicate that the
+  /// generator is exhausted and cannot generate any more squares.
+  ///
+  /// It may also expose a `weight` getter that's used to determine its relative
+  /// likelihood of being selected. If it doesn't, the weight defaults to 100.
+  /* build(rng); */
 }
 
-class SelectOne extends Select {
-	count() {
-		return 1;
+class Select extends Option {
+	constructor(items) {
+		super();
+		this.items = items.map(item => item instanceof Option ? item : new Unique(item));
+	}
+
+	build(rng) {
+		return {
+			generators: this.items.map(item => item.build(rng)),
+			select() {
+				while (this.generators.length > 0) {
+					const indices = Object.keys(this.generators);
+					const i = rng.weighted(indices, this.generators.map(generator => generator.weight ?? 100));
+					const result = this.generators[i].select();
+					if (result) return result;
+
+					this.generators.splice(i, 1);
+				}
+				return null;
+			},
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return `S([${this.items}])`;
 	}
 }
 
@@ -29,81 +52,137 @@ class SelectN extends Select {
 		super(items);
 		this.n = n;
 	}
-	count() {
-		return this.n;
+
+	build(rng) {
+		return {
+			parent: super.build(rng),
+			n: this.n,
+			select() {
+				if (this.n === 0) return null;
+				this.n--;
+				return this.parent.select();
+			},
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return `N(${this.n}, [${this.items}])`;
 	}
 }
 
-class Range {
+class Range extends Option {
 	constructor(min, max) {
+		super();
 		this.min = min;
 		this.max = max;
 	}
 
-	count() {
-		return 1;
+	build(rng) {
+		return {
+			min: this.min,
+			max: this.max,
+			select() {
+				if (this.done) return null;
+				this.done = true;
+				return rng.integer({min: this.min, max: this.max});
+			},
+			toString: () => this.toString(),
+		};
 	}
 
-	select(rng) {
-		return rng.integer({ min: this.min, max: this.max })
+	toString() {
+		return `R(${this.min}, ${this.max})`;
+	}
+}
+
+/// Formats a string with values selected from other `Option` objects.
+class Format extends Option {
+	constructor(format, ...options) {
+		super();
+		this.format = format;
+		this.options = options;
+	}
+
+	build(rng) {
+		return {
+			format: this.format,
+			options: this.options.map(option => option.build(rng)),
+			select() {
+				var str = this.format;
+				for (let i = 0; i < this.options.length; i++) {
+					// Allow the option format to specify the same number multiple
+					// times to select different values from the options.
+					const occurrences = str.split(`{${i}}`).length - 1;
+					for (let j = 0; j < occurrences; j++) {
+						const choice = this.options[i].select();
+						if (!choice) return null;
+						str = str.replace(`{${i}}`, choice);
+					}
+				}
+				return str;
+			},
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return `F(${JSON.stringify(this.format)}, ${this.options})`;
+	}
+}
+
+/// Wraps another option and gives it a specific weight.
+class Weight extends Option {
+	constructor(weight, option) {
+		super();
+		this.weight = weight;
+		this.option = option;
+	};
+
+	build(rng) {
+		return {
+			...this.option.build(rng),
+			weight: this.weight,
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return `W(${this.weight}, ${this.option})`;
+	}
+}
+
+/// A single bingo option that can be selected exactly once. This doesn't need
+/// to be instantiated manually, since `new Select()` will automatically
+/// translate plain strings into `Unique` options.
+class Unique extends Option {
+	constructor(value) {
+		super();
+		this.value = value;
+	}
+
+	build(rng) {
+		return {
+			value: this.value,
+			select() {
+				if (this.done) return null;
+				this.done = true;
+				return this.value;
+			},
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return JSON.stringify(this.value);
 	}
 }
 
 function S(items) { return new Select(items); }
-function O(items) { return new SelectOne(items); }
+function O(items) { return new SelectN(1, items); }
 function N(n, items) { return new SelectN(n, items); }
 function R(min, max) { return new Range(min, max); }
-
-class Option {
-	// Weight starts at 100 so that any value between 0 to 100 will give a relative percentage that
-	// can be somewhat intuitively understood.
-	constructor(desc, weight) {
-		if (!weight) throw new Error("An Option must have a weight.");
-
-		this.desc = desc;
-		this.weight = weight;
-		this.options = [...arguments].slice(2);
-	}
-
-	count() {
-		if (this.options.length > 0) {
-			var m = 1;
-			for (var k = 0; k < this.options.length; ++k) {
-				m *= this.options[k].count();
-			}
-			return m;
-		} else {
-			return 1;
-		}
-	}
-
-	select(rng) {
-		if (this.options.length > 0) {
-			var str = this.desc;
-			for (var i = 0; i < this.options.length; ++i) {
-				// Allow the option format to specify the same number multiple
-				// times to select different values from the options.
-				const seen = new Set();
-				str = str.replaceAll(`{${i}}`, () => {
-					while (true) {
-						const choice = this.options[i].select(rng);
-						if (seen.has(choice)) continue;
-						seen.add(choice);
-						return choice;
-					}
-				});
-			}
-
-			return str;
-		} else {
-			return this.desc;
-		}
-	}
-}
-
-function randInt(i) {
-	return Math.floor(Math.random() * i);
-}
+function F(format, ...options) { return new Format(format, ...options); }
 
 class CellState {
 	constructor() {
@@ -126,8 +205,8 @@ class CellState {
 }
 
 class Bingo {
-	constructor(options, seed=-1) {
-		this.options = options;
+	constructor(option, seed=-1) {
+		this.option = option;
 		this.goals = []
 		if (seed < 0) {
 			this.rng = chance;
@@ -153,31 +232,18 @@ class Bingo {
 	}
 
 	generate() {
-		var choices = [];
-		var counts  = new Map();
-		const table = document.getElementById('bingo-table');
-		const weights = this.options.map(x => x.weight);
-		console.log(weights.toString())
-
+		const choices = [];
+		const generator = this.option.build(this.rng);
 		for (var i = 0; i < 5; ++i) {
 			for (var k = 0; k < 5; ++k) {
 				while (true) {
-					const option = this.rng.weighted(this.options, weights);
-					if (!counts.has(option)) counts.set(option, 0);
-					const count = counts.get(option);
-					if (count >= option.count()) continue;
-
-					var opt = option.select(this.rng);
-					if (choices.includes(opt)) continue;
-
-					counts.set(option, count + 1);
-					choices.push(opt);
-					this.goals.push({"name": opt});
+					var choice = generator.select();
+					choices.push(choice);
+					this.goals.push({"name": choice});
 					break;
 				}
 			}
 		}
-		//shuffleArray(this.goals);
 		this.rng.shuffle(this.goals);
 	}
 
@@ -197,14 +263,4 @@ class Bingo {
 			}
 		}	
 	}
-}
-
-
-
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
 }
