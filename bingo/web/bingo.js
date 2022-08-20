@@ -8,6 +8,10 @@ const ACTIVE = 'bingo-active';
 /// track state over time (for example, to ensure the same option isn't selected
 /// more than once).
 class Option {
+  static wrap(item) {
+    return item instanceof Option ? item : new Unique(item);
+  }
+
   /// Returns a generator object given a random number generator. In addition to
   /// storing private state, this object must expose a `select()` method that
   /// returns either a new unique option or null/undefined to indicate that the
@@ -21,7 +25,7 @@ class Option {
 class Select extends Option {
 	constructor(items) {
 		super();
-		this.items = items.map(item => item instanceof Option ? item : new Unique(item));
+		this.items = items.map(Option.wrap);
 	}
 
 	build(rng) {
@@ -131,24 +135,32 @@ class Format extends Option {
 	}
 }
 
-/// Wraps another option and gives it a specific weight.
+/// Wraps another option and gives it a specific weight. Can take multiple
+/// weights, which are used in order as more items are selected.
 class Weight extends Option {
-	constructor(weight, option) {
+	constructor(weights, option) {
 		super();
-		this.weight = weight;
-		this.option = option;
+		this.weights = weights instanceof Array ? weights : [weights];
+		this.option = Option.wrap(option);
 	};
 
 	build(rng) {
 		return {
-			...this.option.build(rng),
-			weight: this.weight,
+			_inner: this.option.build(rng),
+			_weights: this.weights,
+			get weight() {
+				return this._weights[0];
+			},
+			select() {
+				if (this._weights.length > 0) this._weights.shift();
+				return this._inner.select();
+			},
 			toString: () => this.toString(),
 		};
 	}
 
 	toString() {
-		return `W(${this.weight}, ${this.option})`;
+		return `W(${this.weights}, ${this.option})`;
 	}
 }
 
@@ -183,6 +195,7 @@ function O(items) { return new SelectN(1, items); }
 function N(n, items) { return new SelectN(n, items); }
 function R(min, max) { return new Range(min, max); }
 function F(format, ...options) { return new Format(format, ...options); }
+function W(weights, option) { return new Weight(weights, option); }
 
 class CellState {
 	constructor() {

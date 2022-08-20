@@ -1,17 +1,19 @@
-const OPTIONS = S([
-	F('Find {0}', S([
-		"Gokan's Spiritfall",
-		"Yashariku's Spiritfall",
-		"Ako's Spiritfall",
-		"Gachiin's Spiritfall",
-		"Ungo's Spiritfall"
-	])),
-	"Complete Kotaro's questline (any ending)",
-	N(3, [
-		F('Kill {0} Ashina Generals', O([2, 3])),
+// Options that can only be achieved by finding specific items that could
+// theoretically be anywhere. A critical mass of these squares is crucial for a
+// good bingo board, because they ensure that *you don't know which line will
+// bingo before you start*.
+//
+// While there are some exceptions, especially for certain randomizer settings,
+// for the most part any option in this list can show up anywhere in the game.
+// This variance means that all bingo squares are potentially relevant for most
+// of the duration of the game, that players have to take multiple challenges
+// seriously, and that any item could potentially produce a win.
+const exploration = S([
+	F('Find {0} Spiritfalls', O([3, 4, 5])),
+	W([400, 100, 50], N(3, [
+		F('Kill {0} Ashina General minibosses', O([2, 3])),
 		F('Kill {0} Shichimen Warriors', O([2, 3])),
-		F('Kill {0} Headless', O([1, 2, 3, 4, 5])),
-		F('Kill {0} Lone Shadows', O([2, 3, 4])),
+		F('Kill {0} Lone Shadow minibosses', O([2, 3, 4])),
 		F('Kill {0} Drunkards, Gluttons, and/or Red Guards', O([2, 3, 4])),
 		F('Kill both {0}', S([
 			'Centipedes',
@@ -21,24 +23,33 @@ const OPTIONS = S([
 			'Ogres',
 			'Ashina Elites',
 		])),
-	]),
+	])),
 	F('Defeat {0}', S([
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
+		'Divine Dragon',
 		'3 Genichiros',
 	])),
-	"Kill both mini/bosses in the Guardian Ape's Burrow",
+	// Unique quick items
 	F('Find {0}', S([
-		'Lotus of the Palace',
-		'Shelter Stone', 
-		'Aromatic Branch',
+		'Hidden Tooth',
+		'Ceremonial Tanto',
+		'Five-Color Rice',
+		"Jinza's Jizo Statue",
+		'Nightjar Monocular',
+		"Academic's Red Lump",
+		'Taro Persimmon',
+	])),
+	// Post-Owl plot items
+	F('Find {0}', S([
 		'Frozen Tears',
 		'Divine Dragon Tears',
-		'Aromatic Flower'
+		'Aromatic Flower',
+		'Aromatic Branch',
 	])),
 	F('Fit the {0} tool', N(2, [
-		'Shuriken',
+		'Loaded Shuriken',
 		'Flame Vent',
 		'Firecrackers',
 		'Shinobi Axe',
@@ -49,49 +60,62 @@ const OPTIONS = S([
 		'Divine Abduction',
 		'Finger Whistle'
 	])),
-	F('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal'])),
-	F('Collect {0} prayer necklaces', O([5, 6, 7, 8, 9, 10])),
-	F('Collect {0} gourd seeds', O([5, 6, 7, 8, 9])),
-	'Collect both Serpent Viscera',
-	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
-	F('Collect {0} beverages', R(6, 10)),
-	F('Learn the {0} skill', N(2, [
-		'Empowered Mortal Draw',
-		'Virtuous Deeds',
-		'Most Virtuous Deeds',
-		"Nightjar Slash",
-		'Projected Force',
-		'Chasing Slice',
+	W([300, 100, 50], N(3, [
+		// In theory this could list all skills since they're all
+		// equally likely to be easy or hard to obtain, but exclusively
+		// listing the high-tier skills makes it feel extra exciting
+		// while still providing plenty of variety.
+		W(200, F('Learn the {0} skill', S([
+			// Ashina Arts
+			'Ashina Cross',
+			'Ichimonji: Double', // not technically a terminal skill but so
+			                     // powerful it's worth including anyway.
+			// Prosthetic Arts
+			'Living Force',
+			// Temple Arts
+			'Most Virtuous Deed',
+			'High Monk',
+			'Devotion',
+			// Shinobi Arts
+			'Shadowrush',
+			'Vault Over',
+			// High-end Mushin Arts skills
+			'Shadowfall',
+			'Spiral Cloud Passage',
+			'Empowered Mortal Draw',
+			// Special texts
+		]))),
+		F('Learn both {0} skills', S([
+			'Nightjar Slash' ,
+			"Suppress",
+			"Emma's Medicine",
+		])),
+		// 5 total: two Shinobi's, two Sculptor's, and Beast's
+		F('Learn {0} Karma skills', O([3, 4, 5])),
+		// 4 total: Breath of Nature/Life: Light/Shadow
+		F('Learn {0} Breath skills', O([3, 4])),
+		// 3 total: Combat Arts, Deflection, Prosthetic Tool
+		F('Learn {0} Mid-Air skills', O([2, 3])),
+		// 3 total: Rank 1, 2, and 3
+		F('Learn {0} Shinobi Medicine skills', O([2, 3])),
 	])),
-	F('Find {0} ', S([
+	F('Find {0}', S([
 		'Dragon Tally Board',
 		'Water of the Palace',
 		'Rice for Kuro',
-		'Dancing Dragon Mask',
 		'Great White Whisker',
-		'Red Carp Eyes',
+		'Sakura Droplet',
+		// This is much harder than the rest of the items because it
+		// requires finding three *specific* items.
+		W(50, 'Dancing Dragon Mask'),
 	])),
-	O([
-		F('Possess at least {0} sen at some point', R(5000, 15000)),
-		F('Buy all limited-stock items from {0} and {0}', S([
-			"Crow's Bed Memorial Mob",
-			'Battlefield Memorial Mob',
-			'Blackhat Badger',
-			'Anayama the Peddler',
-			'Fujioka the Info Broker',
-			'Dungeon Memorial Mob',
-			'Shugendo Memorial Mob',
-			'Toxic Memorial Mob',
-			'Exiled Memorial Mob',
-		])),
-	]),
-	F('Find {0}', S(['Purple Gourd', 'Green Gourd', 'Red Gourd'])),
-	O([
-		F('Collect {0} carp scales', R(5, 20)),
-		'Buy all items from one Pot Noble',
-	]),
-	F('Defeat {0} mini/bosses with Bell Demon (not Shizu/Noble)', O([1, 2, 3])),
-	F('Upgrade to the {0}', S([
+	// Many of these upgrades don't directly require specific items other
+	// than the Mechanical Barrel, which will often show up early if the
+	// player has any kind of standard item distribution enabled. However,
+	// every upgrade does require the player to find the base weapon and
+	// since the upgrade order is itself randomized it'll often be blocked
+	// on other prosthetics or special upgrade materials as well.
+	W([100, 50], F('Upgrade to the {0}', N(2, [
 		'Lazulite Axe',
 		'Sparking Axe',
 		'Spring-load Axe',
@@ -122,8 +146,8 @@ const OPTIONS = S([
 		'Double Divine Abduction',
 		'Malcontent',
 		'Mountain Echo'
-	])),
-	F('Find {0}', new SelectN(2, [
+	]))),
+	W([200, 100], F('Find {0}', N(2, [
 		'Black Scroll',
 		"Dosaku's Note",
 		"Flame Barrel Memo",
@@ -144,73 +168,194 @@ const OPTIONS = S([
 		"Surgeon's Stained Letter",
 		"Three-Story Pagoda Memo",
 		"Valley Apparitions Memo"
-	])),
-	N(3, [
-		F('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
-		F('Kill {0} minibosses in one attempt (not Shizu/Noble)', O([4, 5, 6])),
-		F('Kill {0} mini/bosses without taking damage (not Shizu/Noble)', O([4, 5, 6])),
-		'Kill a mini/boss without attacking (except deathblows)',
-		'Kill a mini/boss without blocking/deflecting (not Shizu/Noble)',
-		'Kill a mini/boss without touching the control stick or arrow keys (not Shizu/Noble)',
-		'Kill a mini/boss using only combat arts (not Shizu/Noble)',
+	]))),
+	// Miscellaneous options, grouped together to keep them from having a
+	// ton of relative weight by virtue of being on the same level as
+	// options that have a bunch of different sub-options.
+	S([
+		// Equivalent to finding White Pinwheel and Divine Abduction, plus
+		// beating Genichiro's replacement and Monkeys.
+		"Talk to Kotaro in the Halls of Illusion",
+		// Equivalent to finding Red Carp Eyes plus defeating Snake Eyes
+		// Shirahagi's replacement.
+		"Complete Doujun's questline",
+		"Use Father's Bell Charm to re-enter Hirata Estate",
+		W([100, 50], F('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal']))),
+		'Collect both Serpent Viscera',
+		'Kill a Shichimen Warrior with an Anti-Air Deathblow',
+		F('Open the {0} in Ashina Reservoir', S(['gatehouse', 'secret passage'])),
+		F('Find Mottled {0} Gourd', S(['Purple', 'Green', 'Red'])),
+	]),
+]);
+
+// Options that can and will be achieved by progressing far enough into the
+// game. While exploration options is that those could be triggered very early
+// or could be triggered very late, a canny player will usually be able to guess
+// before the game starts approximately when a progression option will be
+// triggered.
+//
+// As a consequence, these are less valuable than exploration options in terms
+// of informing player behavior. That doesn't mean they're valueless, though!
+// They inform what the player focuses on (saving rather than spending
+// sen/scales, killing minibosses they might otherwise skip, etc), encourage the
+// player to go deep rather than go wide, and provide an appealing variant in
+// what the bingo asks. They should, however, appear sparingly on the board as
+// too many of these in the same line can make the optimal path too
+// deterministic.
+//
+// The line between exploration and progression can be blurry. "Find X
+// Spiritfalls" is exploration while "Finding X beverages" is progression just
+// because of the relative density of those two categories. The crucial question
+// is, how confident is the player about when they're likely to achieve the
+// goal?
+const progression = S([
+	// Plot items required to unlock Fountainhead are considered progression
+	// because they *can't* appear in the lategame.
+	F('Find {0}', O(['Lotus of the Palace', 'Shelter Stone'])),
+	// Equivalent to finding the Mortal Blade
+	'Kill Hanbei the Undying (for good)',
+	F('Collect {0} prayer necklaces', O([6, 7, 8, 9, 10])),
+	F('Collect {0} gourd seeds', O([6, 7, 8, 9])),
+	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
+	F('Possess {0} beverages at one time', R(8, 11)),
+	O([
+		F('Possess at least {0} sen at one time', R(10000, 18000)),
+		F('Buy all limited-stock items from {0} and {0}', S([
+			"Crow's Bed Memorial Mob",
+			'Battlefield Memorial Mob',
+			'Blackhat Badger',
+			'Anayama the Peddler',
+			'Fujioka the Info Broker',
+			'Dungeon Memorial Mob',
+			'Shugendo Memorial Mob',
+			'Toxic Memorial Mob',
+			'Exiled Memorial Mob',
+		])),
+	]),
+	O([
+		F('Possess {0} carp scales at one time', R(5, 20)),
+		'Buy all items from one Pot Noble',
 	]),
 	F('Accumulate {0} skill points ({1} if skills are items)', R(8, 12), R(16, 22)),
-	N(2, [
-		F('Do not use {0}', O(['any combat art', 'either Mortal Draw'])),
-		'Never use a temporary buff item except Divine Confetti',
-		'Never use a stealth kill on a mini/boss',
-		F('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8])),
-		O([
-			'Never use a prosthetic tool in combat',
-			F('{0} use bladed prosthetic tools in combat', O(['Exclusively', 'Never'])),
-			F('{0} use fire prosthetic tools in combat', O(['Exclusively', 'Never'])),
-			F(
-				'Exclusively use prosthetic tools that cost {0} spirit emblems in combat',
-				O([1, 2, 3])
-			),
-		]),
-		O([
-			F('Do not exceed {0} gourd charges', O([3, 4, 5])),
-			F('Never use a healing consumable {0}', S(['', 'except Pellets'])),
-		]),
-	]),
-	F('Kill all enemies {0}', S([
-		'in the Senpou Temple attic',
-		"in Doujun's cave",
-		'guarding Monkey Booze in Bodhisattva Valley',
-		'in the Hidden Forest temple grove before clearing the mist',
-	])),
-	F('Kill the miniboss {0}', S([
-		'in Temple Grounds without using the rafters',
-		F('{0} without killing the mobs', O([
-			'on the Ashina castle stairs',
-			'by the Hidden Forest campfire',
-			'in the Hirata Estate Main Hall',
-			'before the Ashina Castle idol',
-			'before the Underbridge Valley idol',
-		])),
-		'in the tutorial'
-	])),
-	F('Kill the minibosses {0} and {0}', S([
+	W([300, 100], F('Kill the minibosses {0} and {0}', N(2, [
 		'on the Ashina Castle stairs',
 		'in Temple Grounds',
 		'by the Water Mill',
 		'by the Moon-View Tower',
-		'by the Ashina Reservoir idol',
-		'on the Fountainhead tree',
-		'by the Fountainhead waterfall',
-		"the Sakura Bull's nook",
 		'in the Serpent Shrine',
 		'by the Hidden Forest campfire',
 		'on the Ashina Castle ground floor',
-	])),
-	'Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel',
-	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
+		'outside Mibu Manor in Fountainhead',
+		'on the Fountainhead tree',
+		'by the Fountainhead waterfall',
+		'by the Ashina Reservoir idol',
+	]))),
 	O([
 		F('Collect at least {0} {1}', R(40, 60), O(['Scrap Iron', 'Scrap Magnetite'])),
 		F('Collect at least {0} {1}', R(30, 45), O(['Adamantine Scrap', 'Black Gunpowder', 'Yellow Gunpowder'])),
 		F('Collect at least {0} {1}', R(15, 25), O(['Fulminated Mercury', 'Lump of Fat Wax', 'Lump of Grave Wax'])),
 	]),
+]);
+
+// Options that the player can do more or less on demand (at least after
+// unlocking Ashina Castle and Hirata 1), but that take a non-trivial amount of
+// time and effort to actually execute. In many cases these will be the last
+// squares to be filled out after the rest of a line is complete, but the very
+// best challenge options require the player to work on them (or actively decide
+// not to) from the beginning of the run.
+//
+// Challenge options give the player agency over how they fill out the bingo
+// board and produce exciting "last mile" moments where they player knows they
+// have a bingo within their grasp but still need to nail the execution in order
+// to count it. They should be the next most represented category after
+// exploration options.
+const challenge = S([
+	// These are the most valuable challenges because they become *less*
+	// available as the player moves through the game. The player is
+	// incentivized to complete thse challenges as they go, rather than
+	// saving them until the rest of a row is filled out.
+	W([800, 300, 50, 25], N(4, [
+		F('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
+		F('Kill {0} minibosses in one attempt (not Shizu/Noble)', O([4, 5, 6])),
+		F('Kill {0} memory bosses with Bell Demon', O([1, 2, 3])),
+		F('Kill {0} minibosses with Bell Demon (not Shizu/Noble)', O([4, 5, 6])),
+		F('Kill {0} mini/bosses without taking damage from the boss (not Shizu/Noble)', O([3, 4, 5])),
+		'Kill a mini/boss without attacking (except deathblows)',
+		'Kill a mini/boss without blocking/deflecting (not Shizu/Noble)',
+		'Kill a mini/boss without touching the control stick or arrow keys (not Shizu/Noble)',
+		'Kill a mini/boss using only combat arts (not Shizu/Noble)',
+		F('Kill the miniboss {0}', S([
+			'in Temple Grounds without using the rafters',
+			'in the tutorial',
+			F('{0} without killing the mobs', O([
+				'on the Ashina castle stairs',
+				'by the Hidden Forest campfire',
+				'in the Hirata Estate Main Hall',
+				'before the Ashina Castle idol',
+				'before the Underbridge Valley idol',
+			])),
+		])),
+	])),
+	W([100, 50], F('Kill all enemies {0}', N(2, [
+		'in the Senpou Temple attic',
+		"in Doujun's cave (except in cells)",
+		'guarding Monkey Booze in Bodhisattva Valley',
+		'in the Hidden Forest temple grove before clearing the mist',
+	]))),
+	// Since the randomizer default doesn't include headless in the pool
+	// with other minibosses, we consider them challenge options rather than
+	// an exploration options.
+	F('Kill {0} Headless', O([1, 2, 3, 4, 5])),
+	'Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel',
+	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
+	F('Kill {0}', S([
+		"both mini/bosses in the Guardian Ape's Burrow",
+		'the memory bosses at the end of the first Hirata Estate',
+		'the memory boss on Ashina Castle after the first invasion',
+	])),
+]);
+
+// Prohibition options are marked by default, and can only become *un*-marked if
+// the player violates some restriction on their behavior. They add spice to the
+// bingo board, because they force the player to constantly think: is this
+// square's position worth the price to follow this restriction? At what point
+// is it better to abandon it to accelerate the other squares?
+//
+// We usually want one of these, but they become problematic in multiples as
+// they can make individual lines *too* easy to achieve, so we limit them to
+// three per board.
+const prohibition = S([
+	F('Never use {0}', O(['a combat art', 'either Mortal Draw'])),
+	'Never use a temporary buff item except Divine Confetti',
+	'Never use a stealth kill on a mini/boss',
+	F('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8])),
+	O([
+		'Never use a prosthetic tool in combat',
+		F('{0} use bladed prosthetic tools in combat', O(['Exclusively', 'Never'])),
+		F('{0} use fire prosthetic tools in combat', O(['Exclusively', 'Never'])),
+		F(
+			'Exclusively use prosthetic tools that cost {0} spirit emblems in combat',
+			O([1, 2, 3])
+		),
+	]),
+	O([
+		F('Do not exceed {0} gourd charges', O([3, 4, 5])),
+		F('Never use a healing consumable {0}', S(['', 'except Pellets'])),
+	]),
+]);
+
+// Weight here totals to 25, and so represents the average number of squares
+// each type is expected to take on a bingo board.
+//
+// We require between 13 and 20 exploration squares to ensure that the board is
+// neither too deterministic nor too chaotic.
+const OPTIONS = S([
+	W(17, N(20, [exploration])),
+	W(8, N(13, [
+		W(3.5, challenge),
+		W(3, progression),
+		W(1.5, N(3, [prohibition])),
+	])),
 ]);
 
 var BINGO = new Bingo(OPTIONS);
