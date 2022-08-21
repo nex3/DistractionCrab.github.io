@@ -9,7 +9,10 @@
 // of the duration of the game, that players have to take multiple challenges
 // seriously, and that any item could potentially produce a win.
 const exploration = S([
-	F('Find {0} Spiritfalls', O([3, 4, 5])),
+	O([
+		F('Find {0} Spiritfalls', O([3, 4, 5])),
+		F('Get both {0} Spiritfalls', O(['offsensive', 'defensive'])),
+	]),
 	W([400, 100, 50], N(3, [
 		F('Kill {0} Ashina General minibosses', O([2, 3])),
 		F('Kill {0} Shichimen Warriors', O([2, 3])),
@@ -84,16 +87,25 @@ const exploration = S([
 			'Spiral Cloud Passage',
 			'Empowered Mortal Draw',
 			// Special texts
+			'Floating Passage',
 		]))),
 		F('Learn both {0} skills', S([
+			'Carp',
 			'Nightjar Slash' ,
-			"Suppress",
+			'Suppress',
 			"Emma's Medicine",
 		])),
 		// 5 total: two Shinobi's, two Sculptor's, and Beast's
-		F('Learn {0} Karma skills', O([3, 4, 5])),
+		O([
+			F('Learn both {0} Karma skills', O(["Shinobi's", "Sculptor's"])),
+			F('Learn {0} Karma skills', O([3, 4, 5])),
+		]),
 		// 4 total: Breath of Nature/Life: Light/Shadow
-		F('Learn {0} Breath skills', O([3, 4])),
+		O([
+			F('Learn both Breath of {0} skills', O(['Nature', 'Life'])),
+			F('Learn both Breath of ____: {0} skills', O(['Light', 'Shadow'])),
+			F('Learn {0} Breath skills', O([3, 4])),
+		]),
 		// 3 total: Combat Arts, Deflection, Prosthetic Tool
 		F('Learn {0} Mid-Air skills', O([2, 3])),
 		// 3 total: Rank 1, 2, and 3
@@ -179,12 +191,14 @@ const exploration = S([
 		// Equivalent to finding Red Carp Eyes plus defeating Snake Eyes
 		// Shirahagi's replacement.
 		"Complete Doujun's questline",
-		"Use Father's Bell Charm to re-enter Hirata Estate",
 		W([100, 50], F('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal']))),
 		'Collect both Serpent Viscera',
 		'Kill a Shichimen Warrior with an Anti-Air Deathblow',
 		F('Open the {0} in Ashina Reservoir', S(['gatehouse', 'secret passage'])),
-		F('Find Mottled {0} Gourd', S(['Purple', 'Green', 'Red'])),
+		O([
+			F('Find Mottled {0} Gourd', O(['Purple', 'Green', 'Red'])),
+			F('Find {0} Mottled Gourds', O([2, 3])),
+		]),
 	]),
 ]);
 
@@ -214,10 +228,14 @@ const progression = S([
 	F('Find {0}', O(['Lotus of the Palace', 'Shelter Stone'])),
 	// Equivalent to finding the Mortal Blade
 	'Kill Hanbei the Undying (for good)',
-	F('Collect {0} prayer necklaces', O([6, 7, 8, 9, 10])),
-	F('Collect {0} gourd seeds', O([6, 7, 8, 9])),
+	// 10 total
+	F('Collect {0} prayer necklaces', R([6, 9])),
+	// 9 total
+	F('Collect {0} gourd seeds', O([6, 8])),
+	// 14 total
+	F('Collect {0} memories', R([8, 13])),
 	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
-	F('Possess {0} beverages at one time', R(8, 11)),
+	F('Possess {0} beverages at one time', R(8, 12)),
 	O([
 		F('Possess at least {0} sen at one time', R(10000, 18000)),
 		F('Buy all limited-stock items from {0} and {0}', S([
@@ -233,7 +251,8 @@ const progression = S([
 		])),
 	]),
 	O([
-		F('Possess {0} carp scales at one time', R(5, 20)),
+		// 35 total, 7 from Fountainhead carp, 7 from underwater carp
+		F('Possess {0} carp scales at one time', R(14, 28)),
 		'Buy all items from one Pot Noble',
 	]),
 	F('Accumulate {0} skill points ({1} if skills are items)', R(8, 12), R(16, 22)),
@@ -276,14 +295,14 @@ const challenge = S([
 	// saving them until the rest of a row is filled out.
 	W([800, 300, 50, 25], N(4, [
 		F('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
-		F('Kill {0} minibosses in one attempt (not Shizu/Noble)', O([4, 5, 6])),
+		F('Kill {0} non-easy minibosses in one attempt', O([4, 5, 6])),
 		F('Kill {0} memory bosses with Bell Demon', O([1, 2, 3])),
-		F('Kill {0} minibosses with Bell Demon (not Shizu/Noble)', O([4, 5, 6])),
-		F('Kill {0} mini/bosses without taking damage from the boss (not Shizu/Noble)', O([3, 4, 5])),
-		'Kill a mini/boss without attacking (except deathblows)',
-		'Kill a mini/boss without blocking/deflecting (not Shizu/Noble)',
-		'Kill a mini/boss without touching the control stick or arrow keys (not Shizu/Noble)',
-		'Kill a mini/boss using only combat arts (not Shizu/Noble)',
+		F('Kill {0} non-easy minibosses with Bell Demon', O([4, 5, 6])),
+		F('Kill {0} non-easy mini/bosses without taking damage from the boss', O([3, 4, 5])),
+		'Kill a non-easy mini/boss without attacking (except deathblows)',
+		'Kill a non-easy mini/boss without blocking/deflecting',
+		'Kill a non-easy mini/boss without touching the control stick or arrow keys',
+		'Kill a non-easy mini/boss using only combat arts',
 		F('Kill the miniboss {0}', S([
 			'in Temple Grounds without using the rafters',
 			'in the tutorial',
@@ -310,7 +329,13 @@ const challenge = S([
 	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
 	F('Kill {0}', S([
 		"both mini/bosses in the Guardian Ape's Burrow",
+		// While this is mandatory to open Hirata 2 and so may block completing
+		// the game, it's unlikely that that will be required to complete a
+		// bingo except on high bias.
 		'the memory bosses at the end of the first Hirata Estate',
+		// This is usually *not* mandatory in randomizer, since all you need to
+		// open the path to Fountainhead are Lotus of the Palace, Mortal Blade,
+		// Shelter Stone, and Aromatic Branch.
 		'the memory boss on Ashina Castle after the first invasion',
 	])),
 ]);
