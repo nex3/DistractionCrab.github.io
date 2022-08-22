@@ -8,6 +8,10 @@ const ACTIVE = 'bingo-active';
 /// track state over time (for example, to ensure the same option isn't selected
 /// more than once).
 class Option {
+  static wrap(item) {
+    return item instanceof Option ? item : new Unique(item);
+  }
+
   /// Returns a generator object given a random number generator. In addition to
   /// storing private state, this object must expose a `select()` method that
   /// returns either a new unique option or null/undefined to indicate that the
@@ -21,7 +25,7 @@ class Option {
 class Select extends Option {
 	constructor(items) {
 		super();
-		this.items = items.map(item => item instanceof Option ? item : new Unique(item));
+		this.items = items.map(Option.wrap);
 	}
 
 	build(rng) {
@@ -131,24 +135,63 @@ class Format extends Option {
 	}
 }
 
-/// Wraps another option and gives it a specific weight.
+/// Wraps another option and gives it a specific weight. Can take multiple
+/// weights, which are used in order as more items are selected.
 class Weight extends Option {
-	constructor(weight, option) {
+	constructor(weights, option) {
 		super();
-		this.weight = weight;
-		this.option = option;
+		this.weights = weights instanceof Array ? weights : [weights];
+		this.option = Option.wrap(option);
 	};
 
 	build(rng) {
 		return {
-			...this.option.build(rng),
-			weight: this.weight,
+			_inner: this.option.build(rng),
+			_weights: this.weights,
+			get weight() {
+				return this._weights[0];
+			},
+			select() {
+				if (this._weights.length > 0) this._weights.shift();
+				return this._inner.select();
+			},
 			toString: () => this.toString(),
 		};
 	}
 
 	toString() {
-		return `W(${this.weight}, ${this.option})`;
+		return `W(${this.weights}, ${this.option})`;
+	}
+}
+
+/// A special class that adds a tag to an option's result. The bingo board will
+/// be modified to avoid containing more than three options tagged this way in a
+/// line (row, column, or diagonal).
+class ThreeMaxInALine extends Option {
+	constructor(option) {
+		super();
+		this.option = Option.wrap(option);
+	};
+
+	build(rng) {
+		return {
+			_inner: this.option.build(rng),
+			get weight() {
+				return this._inner.weight;
+			},
+			select() {
+				let result = this._inner.select();
+				if (!result) return result;
+				result = new String(result);
+				result.threeMaxInALine = true;
+				return result;
+			},
+			toString: () => this.toString(),
+		};
+	}
+
+	toString() {
+		return `ThreeMaxInALine(${this.option})`;
 	}
 }
 
@@ -183,6 +226,7 @@ function O(items) { return new SelectN(1, items); }
 function N(n, items) { return new SelectN(n, items); }
 function R(min, max) { return new Range(min, max); }
 function F(format, ...options) { return new Format(format, ...options); }
+function W(weights, option) { return new Weight(weights, option); }
 
 class CellState {
 	constructor() {
@@ -207,7 +251,6 @@ class CellState {
 class Bingo {
 	constructor(option, seed=-1) {
 		this.option = option;
-		this.goals = []
 		if (seed < 0) {
 			this.rng = chance;
 		} else {
@@ -232,19 +275,84 @@ class Bingo {
 	}
 
 	generate() {
-		const choices = [];
+		this.goals = [];
 		const generator = this.option.build(this.rng);
 		for (var i = 0; i < 5; ++i) {
 			for (var k = 0; k < 5; ++k) {
 				while (true) {
 					var choice = generator.select();
-					choices.push(choice);
 					this.goals.push({"name": choice});
 					break;
 				}
 			}
 		}
 		this.rng.shuffle(this.goals);
+		this.ensureThreeMaxInALine();
+	}
+
+	ensureThreeMaxInALine() {
+		function row(number) {
+			return [
+				number * 5,
+				number * 5 + 1,
+				number * 5 + 2,
+				number * 5 + 3,
+				number * 5 + 4,
+			];
+		}
+
+		function column(number) {
+			return [
+				number,
+				5 + number,
+				10 + number,
+				15 + number,
+				20 + number,
+			];
+		}
+
+		const checkLine = indexes => {
+			const problems = indexes.filter(i => this.goals[i].name.threeMaxInALine);
+			if (problems.length <= 3) return true;
+
+			// Choose an index to swap out.
+			const i = this.rng.pick(problems);
+
+			// Choose an index to swap in.
+			const j = this.rng.pick([...new Array(25).keys()].filter(i =>
+				!this.goals[i].name.threeMaxInALine && !indexes.includes(i)));
+
+			console.log(`swapping "${this.goals[i].name}" with "${this.goals[j].name}"`);
+			const tmp = this.goals[j];
+			this.goals[j] = this.goals[i];
+			this.goals[i] = tmp
+			return false;;
+		};
+
+		// Check each line and makes a random swap if any of them have
+		// too many three-max options. Do this up to 30 times before
+		// giving up and regenerating the entire board.
+		for (let i = 0; i < 30; i++) {
+			if (!checkLine(row(0))) continue;
+			if (!checkLine(row(1))) continue;
+			if (!checkLine(row(2))) continue;
+			if (!checkLine(row(3))) continue;
+			if (!checkLine(row(4))) continue;
+			if (!checkLine(column(0))) continue;
+			if (!checkLine(column(1))) continue;
+			if (!checkLine(column(2))) continue;
+			if (!checkLine(column(3))) continue;
+			if (!checkLine(column(4))) continue;
+			if (!checkLine([0, 6, 12, 18, 24])) continue;
+			if (!checkLine([4, 8, 12, 16, 20])) continue; 
+
+			// Once we get here, we've ensured that all lines in the
+			// bingo board have three or fewer ThreeMaxInALine
+			// options.
+			return;
+		}
+
+		this.generate();
 	}
 
 	add_listeners() {
