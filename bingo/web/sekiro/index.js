@@ -350,10 +350,12 @@ const challenge = S([
 // they can make individual lines *too* easy to achieve, so we limit them to
 // three per board.
 const prohibition = S([
+	// This prohibition is particularly useful because it counterbalances the
+	// otherwise extremely memory-heavy distribution of low-bias settings.
+	W(300, F('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8]))),
 	F('Never use {0}', O(['a combat art', 'either Mortal Draw'])),
 	'Never use a temporary buff item except Divine Confetti',
 	'Never use a stealth kill on a mini/boss',
-	F('Do not exceed {0} Attack Power', O([4, 5, 6, 7, 8])),
 	O([
 		'Never use a prosthetic tool in combat',
 		F('{0} use bladed prosthetic tools in combat', O(['Exclusively', 'Never'])),
