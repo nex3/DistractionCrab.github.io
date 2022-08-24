@@ -55,7 +55,7 @@ const exploration = S([
 			F('both {0} or both {0} memory bosses', S(['Owl', 'Isshin', 'Ape', 'Lady Butterfly', 'Monk'])),
 		]),
 	]))),
-	// Unique quick items
+	// Unique items
 	F('Find {0}', S([
 		'Hidden Tooth',
 		'Ceremonial Tanto',
@@ -64,6 +64,10 @@ const exploration = S([
 		'Nightjar Monocular',
 		"Academic's Red Lump",
 		'Taro Persimmon',
+		'Dragon Tally Board',
+		// This is much harder than the rest of the items because it
+		// requires finding three *specific* items.
+		W(50, 'Dancing Dragon Mask'),
 	])),
 	// Post-Owl plot items
 	F('Find {0}', S([
@@ -135,16 +139,6 @@ const exploration = S([
 		subset('Shinobi Medicine Rank {0} skill', [1, 2, 3],
 			{count: '{0} Shinobi Medicine skills'}),
 	]))),
-	F('Find {0}', S([
-		'Dragon Tally Board',
-		'Water of the Palace',
-		'Rice for Kuro',
-		'Great White Whisker',
-		'Sakura Droplet',
-		// This is much harder than the rest of the items because it
-		// requires finding three *specific* items.
-		W(50, 'Dancing Dragon Mask'),
-	])),
 	// Many of these upgrades don't directly require specific items other
 	// than the Mechanical Barrel, which will often show up early if the
 	// player has any kind of standard item distribution enabled. However,
@@ -187,6 +181,7 @@ const exploration = S([
 		subset('{0} Note', [
 			"Dosaku's",
 			'Fragrant Flower',
+			'Promissory',
 			"Tomoe's",
 			"Rotting Prisoner's",
 		]),
@@ -212,12 +207,18 @@ const exploration = S([
 		// Equivalent to finding White Pinwheel and Divine Abduction, plus
 		// beating Genichiro's replacement and Monkeys.
 		"Talk to Kotaro in the Halls of Illusion",
-		// Equivalent to finding Red Carp Eyes plus defeating Snake Eyes
-		// Shirahagi's replacement.
-		"Complete Doujun's questline",
+		// Equivalent to finding Red Carp Eyes and Dosaku's Note.
+		'Kill red-eyed Doujun and his red-eyed creation',
 		subset('Find {0} Ninjutsu', ['Puppeteer', 'Bloodsmoke', 'Bestowal']),
-		'Collect both Serpent Viscera',
 		'Kill a Shichimen Warrior with an Anti-Air Deathblow',
+		'Give Water of the Palace to the Mibu priest',
+		'Exchange Rice for Kuro for an item',
+		'Give Great White Whisker to the Great Carp Attendant',
+		'Give Sakura Droplet to Kuro',
+		// Equivalent to getting one of two precious baits and making it to
+		// Fountainhead.
+		"Collect the item from the Great Carp's corpse",
+		'Exchange both Serpent Viscera with the Divine Child for an item',
 		F('Open the {0} in Ashina Reservoir', S(['gatehouse', 'secret passage'])),
 		subset('Find Mottled {0} Gourd', ['Purple', 'Green', 'Red'],
 			{count: 'Find {0} Mottled Gourds'}),
@@ -339,6 +340,7 @@ const challenge = S([
 				'before the Underbridge Valley idol',
 			])),
 		])),
+		'Kill both minibosses in Ashina Outskirts before moving past them',
 	])),
 	W([100, 50], F('Kill all enemies {0}', N(2, [
 		'in the Senpou Temple attic',
@@ -350,8 +352,8 @@ const challenge = S([
 	// with other minibosses, we consider them challenge options rather than
 	// an exploration options.
 	F('Kill {0} Headless', O([1, 2, 3, 4, 5])),
-	'Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel',
-	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
+	'Go from Bodhisattva Valley idol to Main Hall idol without resting',
+	F('Get {0} deathblows without resting', R(15, 30)),
 	F('Kill {0}', S([
 		"both mini/bosses in the Guardian Ape's Burrow",
 		// While this is mandatory to open Hirata 2 and so may block completing
