@@ -1,3 +1,19 @@
+/// Given a set of item names, generates a variety of options for getting
+/// different interesting subsets of them. The result is formatted into the
+/// "format" string, which is automatically pluralized if necessary.
+///
+/// If the `count` option is provided, it's used in place of `format` for the
+/// "{0} of this type" option. If the `plural` option is provided, it's used in
+/// place of `format` when multiple items are requested.
+function subset(singular, items, {count, plural} = {}) {
+  const possibleCounts = items.length == 3 ? [1, 2] : [...items.keys()].slice(items.length - 3);
+  return O([
+    F(count ?? `${singular}s`, O(possibleCounts)),
+    F(plural ?? `${singular}s`, F('{0} and {0}', S(items))),
+    F(singular, S(items)),
+  ]);
+}
+
 // Options that can only be achieved by finding specific items that could
 // theoretically be anywhere. A critical mass of these squares is crucial for a
 // good bingo board, because they ensure that *you don't know which line will
@@ -27,14 +43,19 @@ const exploration = S([
 			'Ashina Elites',
 		])),
 	])),
-	F('Defeat {0}', S([
+	W([300, 100, 50], F('Defeat {0}', S([
 		'Demon of Hatred',
 		'Father Owl',
 		'Sword Saint',
+		'Shura Isshin',
 		'Divine Dragon',
-		'3 Genichiros',
-	])),
-	// Unique quick items
+		'2 Genichiros',
+		O([
+			F('{0} of memory bosses', O(['a matched pair', 'two matched pairs'])),
+			F('both {0} or both {0} memory bosses', S(['Owl', 'Isshin', 'Ape', 'Lady Butterfly', 'Monk'])),
+		]),
+	]))),
+	// Unique items
 	F('Find {0}', S([
 		'Hidden Tooth',
 		'Ceremonial Tanto',
@@ -43,6 +64,10 @@ const exploration = S([
 		'Nightjar Monocular',
 		"Academic's Red Lump",
 		'Taro Persimmon',
+		'Dragon Tally Board',
+		// This is much harder than the rest of the items because it
+		// requires finding three *specific* items.
+		W(50, 'Dancing Dragon Mask'),
 	])),
 	// Post-Owl plot items
 	F('Find {0}', S([
@@ -54,8 +79,8 @@ const exploration = S([
 	F('Fit the {0} tool', N(2, [
 		'Loaded Shuriken',
 		'Flame Vent',
-		'Firecrackers',
-		'Shinobi Axe',
+		'Shinobi Firecracker',
+		'Loaded Axe',
 		'Mist Raven',
 		'Loaded Spear',
 		'Sabimaru',
@@ -63,12 +88,12 @@ const exploration = S([
 		'Divine Abduction',
 		'Finger Whistle'
 	])),
-	W([300, 100, 50], N(3, [
+	W([300, 100, 50], F('Learn {0}', N(3, [
 		// In theory this could list all skills since they're all
 		// equally likely to be easy or hard to obtain, but exclusively
 		// listing the high-tier skills makes it feel extra exciting
 		// while still providing plenty of variety.
-		W(200, F('Learn the {0} skill', S([
+		W(200, F('the {0} skill', S([
 			// Ashina Arts
 			'Ashina Cross',
 			'Ichimonji: Double', // not technically a terminal skill but so
@@ -89,7 +114,7 @@ const exploration = S([
 			// Special texts
 			'Floating Passage',
 		]))),
-		F('Learn both {0} skills', S([
+		F('both {0} skills', S([
 			'Carp',
 			'Nightjar Slash' ,
 			'Suppress',
@@ -97,30 +122,23 @@ const exploration = S([
 		])),
 		// 5 total: two Shinobi's, two Sculptor's, and Beast's
 		O([
-			F('Learn both {0} Karma skills', O(["Shinobi's", "Sculptor's"])),
-			F('Learn {0} Karma skills', O([3, 4, 5])),
+			F('both {0} Karma skills', O(["Shinobi's", "Sculptor's"])),
+			F('{0} Karma skills', O([3, 4, 5])),
 		]),
 		// 4 total: Breath of Nature/Life: Light/Shadow
 		O([
-			F('Learn both Breath of {0} skills', O(['Nature', 'Life'])),
-			F('Learn both Breath of ____: {0} skills', O(['Light', 'Shadow'])),
-			F('Learn {0} Breath skills', O([3, 4])),
+			F('both Breath of {0} skills', O(['Nature', 'Life'])),
+			F('both Breath of ____: {0} skills', O(['Light', 'Shadow'])),
+			F('{0} Breath skills', O([3, 4])),
 		]),
 		// 3 total: Combat Arts, Deflection, Prosthetic Tool
-		F('Learn {0} Mid-Air skills', O([2, 3])),
+		subset('Mid-Air {0} skill',
+			['Combat Arts', 'Deflection', 'Prosthetic Tool'],
+			{count: '{0} Mid-Air skills'}),
 		// 3 total: Rank 1, 2, and 3
-		F('Learn {0} Shinobi Medicine skills', O([2, 3])),
-	])),
-	F('Find {0}', S([
-		'Dragon Tally Board',
-		'Water of the Palace',
-		'Rice for Kuro',
-		'Great White Whisker',
-		'Sakura Droplet',
-		// This is much harder than the rest of the items because it
-		// requires finding three *specific* items.
-		W(50, 'Dancing Dragon Mask'),
-	])),
+		subset('Shinobi Medicine Rank {0} skill', [1, 2, 3],
+			{count: '{0} Shinobi Medicine skills'}),
+	]))),
 	// Many of these upgrades don't directly require specific items other
 	// than the Mechanical Barrel, which will often show up early if the
 	// player has any kind of standard item distribution enabled. However,
@@ -160,26 +178,27 @@ const exploration = S([
 		'Mountain Echo'
 	]))),
 	W([200, 100], F('Find {0}', N(2, [
-		'Black Scroll',
-		"Dosaku's Note",
-		"Flame Barrel Memo",
-		"Fragrant Flower Note",
-		"Tomoe's Note",
-		"Herb Catalogue Scrap",
-		"Holy Chapter: Dragon's Return",
-		"Holy Chapter: Infested",
-		"Immortal Severance Scrap",
-		"Immortal Severance Text",
-		"Isshin's Letter",
-		"Nightjar Beacon Memo",
-		"Okami's Ancient Text",
-		"Ornamental Letter",
-		"Rat Description",
-		"Rotting Prisoner's Note",
-		"Sabimaru Memo",
-		"Surgeon's Stained Letter",
-		"Three-Story Pagoda Memo",
-		"Valley Apparitions Memo"
+		subset('{0} Note', [
+			"Dosaku's",
+			'Fragrant Flower',
+			'Promissory',
+			"Tomoe's",
+			"Rotting Prisoner's",
+		]),
+		subset('{0} Memo', [
+			'Flame Barrel',
+			'Nightjar Beacon',
+			'Sabimaru',
+			'Three-Story Pagoda',
+			'Valley Appartions',
+		]),
+		subset('{0} Letter', ["Isshin's", 'Ornamental', "Surgeon's Stained"]),
+		// Can't just write "both Texts" because it's confusing with
+		// skill texts and esoteric texts.
+		F('both {0}s', O(['Holy Chapter', 'Scrap', "Immortal Severance and Okami's Ancient Text"])),
+		// Weight these relatively lower because they have less variety
+		// than the other options.
+		W(50, S(['Black Scroll', 'Rat Description'])),
 	]))),
 	// Miscellaneous options, grouped together to keep them from having a
 	// ton of relative weight by virtue of being on the same level as
@@ -188,17 +207,21 @@ const exploration = S([
 		// Equivalent to finding White Pinwheel and Divine Abduction, plus
 		// beating Genichiro's replacement and Monkeys.
 		"Talk to Kotaro in the Halls of Illusion",
-		// Equivalent to finding Red Carp Eyes plus defeating Snake Eyes
-		// Shirahagi's replacement.
-		"Complete Doujun's questline",
-		W([100, 50], F('Find {0} Ninjutsu', S(['Puppeteer', 'Bloodsmoke', 'Bestowal']))),
-		'Collect both Serpent Viscera',
+		// Equivalent to finding Red Carp Eyes and Dosaku's Note.
+		'Kill red-eyed Doujun and his red-eyed creation',
+		subset('Find {0} Ninjutsu', ['Puppeteer', 'Bloodsmoke', 'Bestowal']),
 		'Kill a Shichimen Warrior with an Anti-Air Deathblow',
+		'Give Water of the Palace to the Mibu priest',
+		'Exchange Rice for Kuro for an item',
+		'Give Great White Whisker to the Great Carp Attendant',
+		'Give Sakura Droplet to Kuro',
+		// Equivalent to getting one of two precious baits and making it to
+		// Fountainhead.
+		"Collect the item from the Great Carp's corpse",
+		'Exchange both Serpent Viscera with the Divine Child for an item',
 		F('Open the {0} in Ashina Reservoir', S(['gatehouse', 'secret passage'])),
-		O([
-			F('Find Mottled {0} Gourd', O(['Purple', 'Green', 'Red'])),
-			F('Find {0} Mottled Gourds', O([2, 3])),
-		]),
+		subset('Find Mottled {0} Gourd', ['Purple', 'Green', 'Red'],
+			{count: 'Find {0} Mottled Gourds'}),
 	]),
 ]);
 
@@ -294,15 +317,18 @@ const challenge = S([
 	// incentivized to complete thse challenges as they go, rather than
 	// saving them until the rest of a row is filled out.
 	W([800, 300, 50, 25], N(4, [
-		F('Kill {0} memory bosses in one attempt', O([1, 2, 3])),
-		F('Kill {0} non-easy minibosses in one attempt', O([4, 5, 6])),
+		// Weight the one-attempt options a little higher—since they can
+		// only be attempted once per boss, they're more dynamic and
+		// exciting than other options.
+		W(200, F('Kill {0} memory bosses in one attempt', O([1, 2, 3]))),
+		W(200, F('Kill {0} non-easy minibosses in one attempt', O([4, 5, 6]))),
 		F('Kill {0} memory bosses with Bell Demon', O([1, 2, 3])),
 		F('Kill {0} non-easy minibosses with Bell Demon', O([4, 5, 6])),
 		F('Kill {0} non-easy mini/bosses without taking damage from the boss', O([3, 4, 5])),
-		'Kill a non-easy mini/boss without attacking (except deathblows)',
-		'Kill a non-easy mini/boss without blocking/deflecting',
-		'Kill a non-easy mini/boss without touching the control stick or arrow keys',
-		'Kill a non-easy mini/boss using only combat arts',
+		F('Kill {0} non-easy mini/bosses without attacking except deathblows {1}',
+			O([3, 4, 5]), O(['', 'and combat arts'])),
+		F('Kill {0} non-easy mini/bosses without blocking/deflecting', O([3, 4, 5])),
+		F('Kill {0} non-easy mini/bosses without touching the control stick or arrow keys', O([2, 3, 4])),
 		F('Kill the miniboss {0}', S([
 			'in Temple Grounds without using the rafters',
 			'in the tutorial',
@@ -314,6 +340,7 @@ const challenge = S([
 				'before the Underbridge Valley idol',
 			])),
 		])),
+		'Kill both minibosses in Ashina Outskirts before moving past them',
 	])),
 	W([100, 50], F('Kill all enemies {0}', N(2, [
 		'in the Senpou Temple attic',
@@ -325,8 +352,8 @@ const challenge = S([
 	// with other minibosses, we consider them challenge options rather than
 	// an exploration options.
 	F('Kill {0} Headless', O([1, 2, 3, 4, 5])),
-	'Go from Bodhisattva Valley idol to Main Hall idol without resting, dying, or fast travel',
-	F('Get {0} deathblows without resting, dying, or fast travel', R(15, 30)),
+	'Go from Bodhisattva Valley idol to Main Hall idol without resting',
+	F('Get {0} deathblows without resting', R(15, 30)),
 	F('Kill {0}', S([
 		"both mini/bosses in the Guardian Ape's Burrow",
 		// While this is mandatory to open Hirata 2 and so may block completing
