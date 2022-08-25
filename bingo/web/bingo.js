@@ -164,26 +164,33 @@ class Weight extends Option {
 	}
 }
 
-/// A special class that adds a tag to an option's result. The bingo board will
-/// be modified to avoid containing more than three options tagged this way in a
-/// line (row, column, or diagonal).
-class ThreeMaxInALine extends Option {
-	constructor(option) {
+/// A special class that limits the options its wrapped to appearing only N
+/// times in a single line on the Bingo board.
+class LimitPerLine extends Option {
+	// The next ID to use to distinguish between multiple `LimitPerLine`s in
+	// the same set of options.
+	static nextId = 0;
+
+	constructor(limit, option) {
 		super();
+		this.limit = limit;
+		this.id = LimitPerLine.nextId++;
 		this.option = Option.wrap(option);
 	};
 
 	build(rng) {
 		return {
 			_inner: this.option.build(rng),
+			_limit: this.limit,
+			_id: this.id,
 			get weight() {
 				return this._inner.weight;
 			},
 			select() {
 				let result = this._inner.select();
 				if (!result) return result;
-				result = new String(result);
-				result.threeMaxInALine = true;
+				result = result instanceof String ? result : new String(result);
+				(result.limitsPerLine ??= {})[this._id] = this._limit;
 				return result;
 			},
 			toString: () => this.toString(),
@@ -191,7 +198,7 @@ class ThreeMaxInALine extends Option {
 	}
 
 	toString() {
-		return `ThreeMaxInALine(${this.option})`;
+		return `LimitPerLine(${this.limit}, ${this.option})`;
 	}
 }
 
@@ -287,10 +294,10 @@ class Bingo {
 			}
 		}
 		this.rng.shuffle(this.goals);
-		this.ensureThreeMaxInALine();
+		this.ensureLimitPerLine();
 	}
 
-	ensureThreeMaxInALine() {
+	ensureLimitPerLine() {
 		function row(number) {
 			return [
 				number * 5,
@@ -311,22 +318,38 @@ class Bingo {
 			];
 		}
 
-		const checkLine = indexes => {
-			const problems = indexes.filter(i => this.goals[i].name.threeMaxInALine);
-			if (problems.length <= 3) return true;
+		const checkLine = cellsInLine => {
+			const limitedCellsById = {};
+			for (const i of cellsInLine) {
+				const limits = this.goals[i].name.limitsPerLine;
+				if (!limits) continue;
+				for (const [id, limit] of Object.entries(limits)) {
+					(limitedCellsById[id] ??= {
+						id,
+						limit,
+						limitedCells: [],
+					}).limitedCells.push(i);
+				}
+			}
 
-			// Choose an index to swap out.
-			const i = this.rng.pick(problems);
+			for (const {id, limit, limitedCells} of Object.values(limitedCellsById)) {
+				if (limitedCells.length <= limit) continue;
 
-			// Choose an index to swap in.
-			const j = this.rng.pick([...new Array(25).keys()].filter(i =>
-				!this.goals[i].name.threeMaxInALine && !indexes.includes(i)));
+				// Choose an index to swap out.
+				const i = this.rng.pick(limitedCells);
 
-			console.log(`swapping "${this.goals[i].name}" with "${this.goals[j].name}"`);
-			const tmp = this.goals[j];
-			this.goals[j] = this.goals[i];
-			this.goals[i] = tmp
-			return false;;
+				// Choose an index to swap in.
+				const j = this.rng.pick([...new Array(25).keys()].filter(i =>
+					!(this.goals[i].name.limitsPerLine ?? {})[id] &&
+					!cellsInLine.includes(i)));
+
+				const tmp = this.goals[j];
+				this.goals[j] = this.goals[i];
+				this.goals[i] = tmp
+				return false;;
+			}
+
+			return true;
 		};
 
 		// Check each line and makes a random swap if any of them have
@@ -352,6 +375,7 @@ class Bingo {
 			return;
 		}
 
+          console.log(`regenerating board`);
 		this.generate();
 	}
 

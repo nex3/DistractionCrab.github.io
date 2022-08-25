@@ -405,10 +405,10 @@ const prohibition = S([
 // neither too deterministic nor too chaotic.
 const OPTIONS = S([
 	W(17, N(20, [exploration])),
-	new ThreeMaxInALine(W(8, N(13, [
+	new LimitPerLine(3, W(8, N(13, [
 		W(3.5, challenge),
 		W(3, progression),
-		W(1.5, N(3, [prohibition])),
+		new LimitPerLine(1, W(1.5, N(3, [prohibition]))),
 	]))),
 ]);
 
