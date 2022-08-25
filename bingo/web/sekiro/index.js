@@ -26,7 +26,7 @@ function subset(singular, items, {count, plural} = {}) {
 // seriously, and that any item could potentially produce a win.
 const exploration = S([
 	O([
-		F('Find {0} Spiritfalls', O([3, 4, 5])),
+		F('Find {0} Spiritfalls', O([3, 4])),
 		F('Get both {0} Spiritfalls', O(['offsensive', 'defensive'])),
 	]),
 	W([400, 100, 50], N(3, [
@@ -50,10 +50,10 @@ const exploration = S([
 		'Shura Isshin',
 		'Divine Dragon',
 		'2 Genichiros',
-		O([
+		W(200, O([
 			F('{0} of memory bosses', O(['a matched pair', 'two matched pairs'])),
 			F('both {0} or both {0} memory bosses', S(['Owl', 'Isshin', 'Ape', 'Lady Butterfly', 'Monk'])),
-		]),
+		])),
 	]))),
 	// Unique items
 	F('Find {0}', S([
@@ -65,65 +65,57 @@ const exploration = S([
 		"Academic's Red Lump",
 		'Taro Persimmon',
 		'Dragon Tally Board',
+		'Red and White Pinwheel',
 		// This is much harder than the rest of the items because it
 		// requires finding three *specific* items.
 		W(50, 'Dancing Dragon Mask'),
 	])),
-	// Post-Owl plot items
-	F('Find {0}', S([
-		'Frozen Tears',
-		'Divine Dragon Tears',
-		'Aromatic Flower',
-		'Aromatic Branch',
-	])),
-	F('Fit the {0} tool', N(2, [
-		'Loaded Shuriken',
-		'Flame Vent',
-		'Shinobi Firecracker',
-		'Loaded Axe',
-		'Mist Raven',
-		'Loaded Spear',
-		'Sabimaru',
-		'Loaded Umbrella',
-		'Divine Abduction',
-		'Finger Whistle'
-	])),
+	// Ending items
+	F('Find {0}', S(['Frozen Tears', "Divine Dragon's Tears", 'Aromatic Flower'])),
 	W([300, 100, 50], F('Learn {0}', N(3, [
-		// In theory this could list all skills since they're all
-		// equally likely to be easy or hard to obtain, but exclusively
-		// listing the high-tier skills makes it feel extra exciting
-		// while still providing plenty of variety.
-		W(200, F('the {0} skill', S([
-			// Ashina Arts
-			'Ashina Cross',
-			'Ichimonji: Double', // not technically a terminal skill but so
-			                     // powerful it's worth including anyway.
-			// Prosthetic Arts
-			'Living Force',
-			// Temple Arts
-			'Most Virtuous Deed',
-			'High Monk',
-			'Devotion',
-			// Shinobi Arts
-			'Shadowrush',
-			'Vault Over',
-			// High-end Mushin Arts skills
-			'Shadowfall',
-			'Spiral Cloud Passage',
-			'Empowered Mortal Draw',
-			// Special texts
-			'Floating Passage',
-		]))),
-		F('both {0} skills', S([
-			'Carp',
-			'Nightjar Slash' ,
-			'Suppress',
-			"Emma's Medicine",
+		W(200, S([
+			// List high-tier skills as the individual skills to
+			// search for. In theory all skills could be individual
+			// options since they're all equally likely to be easy
+			// or hard to obtain, but exclusively listing the
+			// high-tier skills makes it feel extra exciting while
+			// still providing plenty of variety.
+			//
+			// Weight 500 so each individual skill has the same
+			// likelihood as any other entry in this list.
+			W(500, F('the {0} skill', S([
+				'Ashina Cross',
+				'the Devotion skill',
+				'the Floating Passage skill',
+				'the High Monk skill',
+				'the Vault Over skill',
+			]))),
+			// For skills with both high- and low-tier variants, ask
+			// players to either obtain both or just the higher
+			// tier.
+			O(['both Force skills', 'the Living Force skill']),
+			O(['both Ichimonji skills', 'the Ichimonji: Double skill']),
+			O(['both Mortal Draw skills', 'the Empowered Mortal Draw skill']),
+			O(['both Virtuous Deed skills', 'the Most Virtuous Deed skill']),
+			O(['both Passage skills', 'the Spiral Cloud Passage skill']),
+			O(['both Shadow____ skills', 'the Shadowfall skill']),
+			// Both variants of these skills are relatively
+			// low-tier.
+			//
+			// Weight 500 so each individual skill has the same
+			// likelihood as any other entry in this list.
+			W(500, F('both {0} skills', S([
+				'Praying Strikes',
+				'Carp',
+				'Nightjar Slash' ,
+				'Suppress',
+				"Emma's Medicine",
+			]))),
 		])),
 		// 5 total: two Shinobi's, two Sculptor's, and Beast's
 		O([
 			F('both {0} Karma skills', O(["Shinobi's", "Sculptor's"])),
-			F('{0} Karma skills', O([3, 4, 5])),
+			F('{0} Karma skills', O([3, 4])),
 		]),
 		// 4 total: Breath of Nature/Life: Light/Shadow
 		O([
@@ -145,38 +137,68 @@ const exploration = S([
 	// every upgrade does require the player to find the base weapon and
 	// since the upgrade order is itself randomized it'll often be blocked
 	// on other prosthetics or special upgrade materials as well.
-	W([100, 50], F('Upgrade to the {0}', N(2, [
-		'Lazulite Axe',
-		'Sparking Axe',
-		'Spring-load Axe',
-		'Phantom Kunai',
-		'Sen Throw',
-		'Gouging Top',
-		'Lazulite Shuriken',
-		'Spinning Shuriken',
-		'Spiral Spear',
-		'Leaping Flame',
-		'Loaded Spear Thrust Type',
-		'Loaded Spear Cleave Type',
-		"Phoenix's Lilac Umbrella",
-		"Suzaku's Lotus Umbrella",
-		'Loaded Umbrella - Magnet',
-		"Okinaga's Flame Vent",
-		'Lazulite Sacred Flame',
-		'Spring-load Flame Vent',
-		'Long Spark',
-		'Sprig-load Firecracker',
-		'Purple Fume Spark',
-		'Lazulite Sabimaru',
-		'Piercing Sabimaru',
-		'Improved Sabimaru',
-		'Aged Feather Mist Raven',
-		'Great Feather Mist Raven',
-		'Golden Vortex',
-		'Double Divine Abduction',
-		'Malcontent',
-		'Mountain Echo'
-	]))),
+	W([200, 50], N(2, [
+		O([
+			'Fit the Loaded Axe tool',
+			'Upgrade to the Lazulite Axe',
+			'Upgrade to the Sparking Axe',
+			'Upgrade to the Spring-load Axe',
+		]),
+		O([
+			'Fit the Loaded Shuriken tool',
+			'Upgrade to the Phantom Kunai',
+			'Upgrade to the Sen Throw',
+			'Upgrade to the Gouging Top',
+			'Upgrade to the Lazulite Shuriken',
+			'Upgrade to the Spinning Shuriken',
+		]),
+		O([
+			'Fit the Loaded Spear tool',
+			'Upgrade to the Spiral Spear',
+			'Upgrade to the Leaping Flame',
+			'Upgrade to the Loaded Spear Thrust Type',
+			'Upgrade to the Loaded Spear Cleave Type',
+		]),
+		O([
+			'Fit the Loaded Umbrella tool',
+			"Upgrade to the Phoenix's Lilac Umbrella",
+			"Upgrade to the Suzaku's Lotus Umbrella",
+			'Upgrade to the Loaded Umbrella - Magnet',
+		]),
+		O([
+			'Fit the Flame Vent tool',
+			"Upgrade to the Okinaga's Flame Vent",
+			'Upgrade to the Lazulite Sacred Flame',
+			'Upgrade to the Spring-load Flame Vent',
+			'Upgrade to the Long Spark',
+		]),
+		O([
+			'Fit the Shinobi Firecracker tool',
+			'Upgrade to the Sprig-load Firecracker',
+			'Upgrade to the Purple Fume Spark',
+		]),
+		O([
+			'Fit the Sabimaru tool',
+			'Upgrade to the Lazulite Sabimaru',
+			'Upgrade to the Piercing Sabimaru',
+			'Upgrade to the Improved Sabimaru',
+		]),
+		O([
+			'Fit the Mist Raven tool',
+			'Upgrade to the Aged Feather Mist Raven',
+			'Upgrade to the Great Feather Mist Raven',
+		]),
+		O([
+			'Fit the Divine Abduction tool',
+			'Upgrade to the Golden Vortex',
+			'Upgrade to the Double Divine Abduction',
+		]),
+		O([
+			'Fit the Finger Whistle tool',
+			'Upgrade to the Malcontent',
+			'Upgrade to the Mountain Echo'
+		]),
+	])),
 	W([200, 100], F('Find {0}', N(2, [
 		subset('{0} Note', [
 			"Dosaku's",
@@ -248,20 +270,24 @@ const exploration = S([
 const progression = S([
 	// Plot items required to unlock Fountainhead are considered progression
 	// because they *can't* appear in the lategame.
-	F('Find {0}', O(['Lotus of the Palace', 'Shelter Stone'])),
-	// Equivalent to finding the Mortal Blade
-	'Kill Hanbei the Undying (for good)',
+	O([
+		'Find Lotus of the Palace',
+		'Find Shelter Stone',
+		'Find Aromatic Branch',
+		// Equivalent to finding the Mortal Blade
+		'Kill Hanbei the Undying (for good)',
+	]),
 	// 10 total
 	F('Collect {0} prayer necklaces', R([6, 9])),
 	// 9 total
-	F('Collect {0} gourd seeds', O([6, 8])),
+	F('Collect {0} gourd seeds', R([6, 8])),
 	// 14 total
 	F('Collect {0} memories', R([8, 13])),
 	// 13 total: 9 sakes, 3 monkey boozes, 1 water of the palace
 	F('Possess {0} beverages at one time', R(8, 12)),
 	O([
 		F('Possess at least {0} sen at one time', R(10000, 18000)),
-		F('Buy all limited-stock items from {0} and {0}', S([
+		W(300, F('Buy out {0} and {0}', S([
 			"Crow's Bed Memorial Mob",
 			'Battlefield Memorial Mob',
 			'Blackhat Badger',
@@ -271,7 +297,7 @@ const progression = S([
 			'Shugendo Memorial Mob',
 			'Toxic Memorial Mob',
 			'Exiled Memorial Mob',
-		])),
+		]))),
 	]),
 	O([
 		// 35 total, 7 from Fountainhead carp, 7 from underwater carp
@@ -279,7 +305,7 @@ const progression = S([
 		'Buy all items from one Pot Noble',
 	]),
 	F('Accumulate {0} skill points ({1} if skills are items)', R(8, 12), R(16, 22)),
-	W([300, 100], F('Kill the minibosses {0} and {0}', N(2, [
+	W([200, 100], F('Kill the minibosses {0} and {0}', N(2, [
 		'on the Ashina Castle stairs',
 		'in Temple Grounds',
 		'by the Water Mill',
@@ -383,6 +409,7 @@ const prohibition = S([
 	F('Never use {0}', O(['a combat art', 'either Mortal Draw'])),
 	'Never use a temporary buff item except Divine Confetti',
 	'Never use a stealth kill on a mini/boss',
+	'Never use a Mikiri Counter',
 	O([
 		'Never use a prosthetic tool in combat',
 		F('{0} use bladed prosthetic tools in combat', O(['Exclusively', 'Never'])),
@@ -406,8 +433,8 @@ const prohibition = S([
 const OPTIONS = S([
 	W(17, N(20, [exploration])),
 	new LimitPerLine(3, W(8, N(13, [
-		W(3.5, challenge),
-		W(3, progression),
+		W(4, challenge),
+		W(2.5, progression),
 		new LimitPerLine(1, W(1.5, N(3, [prohibition]))),
 	]))),
 ]);
